@@ -7,7 +7,7 @@
     <button type="button" class="btn btn-danger pull-right" ng-show="planning" ng-click="cancelPlanning()">Cancel</button>
     <button type="button" class="btn btn-warning pull-right" ng-show="planning" ng-disabled="iterations==1" ng-click="removeLastIteration()">Remove iteration</button>
     <button type="button" class="btn btn-info pull-right" ng-show="planning" ng-click="addIteration()">Add iteration</button>
-    <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#new-release-modal" ng-show="planning">Save release</button>
+    <button type="button" class="btn btn-info pull-right" ng-show="planning" ng-click="saveRelease()">Save release</button>
 </p>
 
 <div class="backlog-stories" ng-class="{ active: planning }">

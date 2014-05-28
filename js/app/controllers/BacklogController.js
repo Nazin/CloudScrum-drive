@@ -50,7 +50,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
     $scope.newStoryModal = $('#new-story-modal');
     $scope.newTaskModal = $('#new-task-modal');
 
-    $scope.iterationLength = 7; //TODO obtain from configuration
+    $scope.iterationLength = 14;
     $scope.releaseStartDate = moment().add('days', 1).format('YYYY-MM-DD');
     $scope.minReleaseStartDate = moment().format('YYYY-MM-DD');
     $scope.maxReleaseStartDate = moment().add('years', 2).format('YYYY-MM-DD');
@@ -139,6 +139,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
 
     $scope.cancelPlanning = function() {
         if (confirm('Are you sure?')) {//TODO maybe some nicer confirm (not js default)
+            $rootScope.error = '';
             $scope.planning = false;
             $scope.iterations = 0;
             for (var i = $scope.stories.length-1; i >= 0 ; i--) {
@@ -167,6 +168,24 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
                 $scope.iterations--;
                 break;
             }
+        }
+    };
+
+    $scope.saveRelease = function() {
+
+        $rootScope.error = '';
+
+        for (var i = 0, l = $scope.stories.length; i < l; i++) {
+            if (typeof $scope.stories[i].ruler !== 'undefined') {
+                if ($scope.stories[i].points === 0) {
+                    $rootScope.error = 'Some of your iterations are empty!';
+                    break;
+                }
+            }
+        }
+
+        if ($rootScope.error === '') {
+            $scope.newReleaseModal.modal('show');
         }
     };
 

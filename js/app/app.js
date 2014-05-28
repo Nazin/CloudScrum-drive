@@ -43,6 +43,7 @@ cloudScrum.run(function($rootScope, $route, $location, $localStorage, Google, Fl
     $rootScope.loading = true;
     $rootScope.authorized = false;
     $rootScope.companies = [];
+    $rootScope.error = '';
     $rootScope.newCompanyModal = $('#new-company-modal');
 
     Google.login().then(function() {

@@ -51,6 +51,8 @@
             <h1 ng-bind="title">CloudScrum</h1>
         </div>
 
+        <div class="alert alert-danger fade" ng-class="{ in: error !== '' }" ng-show="error !== ''">{{ error }}</div>
+
         <div ng-view></div>
     </div>
 
