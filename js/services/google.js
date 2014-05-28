@@ -90,7 +90,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
     };
 
     self.findCompaniesFiles = function() {
-        return findFiles('title contains \'CloudScrum-\' and \'root\' in parents and trashed = false and mimeType = \'application/vnd.google-apps.folder\'');
+        return findFiles('title contains \'CloudScrum-\' and (\'root\' in parents or sharedWithMe) and trashed = false and mimeType = \'application/vnd.google-apps.folder\'');
     };
 
     self.findProjectsFiles = function(parent) {
