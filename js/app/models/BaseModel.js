@@ -53,6 +53,12 @@ cloudScrum.factory('BaseModel', [function() {
             angular.extend(_values, data);
         }
 
+        Object.defineProperty(this, 'isNew', {
+            get: function() {
+                return _isNew;
+            }
+        });
+
         this.save = function() {
 
             for (var i = 0, l = fields.length; i < l; i++) {
@@ -84,7 +90,7 @@ cloudScrum.factory('BaseModel', [function() {
             }
 
             return changed;
-        }
+        };
     }
 
     BaseModel.prototype.set = function(data) {

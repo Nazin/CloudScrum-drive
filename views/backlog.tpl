@@ -13,7 +13,7 @@
 <div class="backlog-stories" ng-class="{ active: planning }">
     <form role="form" class="form-horizontal" novalidate name="editStoryForm">
         <div class="panel-group" id="accordion" ui-sortable="sortableOptions" ng-model="stories">
-            <div class="panel panel-default backlog-story" ng-repeat="story in stories" ng-class="{ disabled: (planning&&!story.ruler)||(!sortable&&!story.ruler), ruler: story.ruler }">
+            <div class="panel panel-default backlog-story" ng-repeat="story in stories" ng-class="{ disabled: (planning&&!story.ruler)||(!sortable&&!story.ruler), ruler: story.ruler, new: story.isNew }">
                 <div class="ruler" ng-if="story.ruler">
                     <div class="iteration badge badge-success">Iteration {{story.iteration}}</div>
                     <div class="points badge badge-success">{{story.points}}</div>
@@ -58,7 +58,7 @@
                             <div class="no-tasks" ng-show="story.tasks.length===0">
                                 <p class="text-warning">There are no tasks defined for this story.</p>
                             </div>
-                            <div class="task" ng-repeat="task in story.tasks">
+                            <div class="task" ng-repeat="task in story.tasks" ng-class="{ new: task.isNew }">
                                 <div class="form-group">
                                     <div class="col-sm-8">
                                         <input type="text" class="form-control" ng-model="task.title" ng-value-change="edit()" ng-class="{ changed: task._title }" ng-readonly="planning" placeholder="Title" required />

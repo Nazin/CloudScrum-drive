@@ -80,7 +80,7 @@
                 <td>{{story.estimate}} SP</td>
                 <td>{{story.effort ? story.effort : 0}} h</td>
             </tr>
-            <tr class="task" ng-repeat="task in story.tasks">
+            <tr class="task" ng-repeat="task in story.tasks" ng-class="{ new: task.isNew }">
                 <td colspan="3"></td>
                 <td ng-bs-popover>
                     <a href="" ng-click="setStory(story);showTaskDetails(task)" class="popover-toggle" data-container="body" data-trigger="hover" data-placement="bottom" data-content="{{task.details ? task.details : ' '}}">{{task.title}}</a>
