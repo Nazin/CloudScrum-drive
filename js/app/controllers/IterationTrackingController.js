@@ -51,6 +51,9 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
 
             Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
                 $scope.unsaved = false;
+                for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
+                    $scope.iteration.stories[i].save();
+                }
             }, function(error) {
                 alert('handle error: ' + error); //todo handle error
             }).finally(function() {
@@ -89,7 +92,7 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
     $scope.createTask = function() {
         $scope.unsaved = true;
         $scope.task.id = 'T-' + ($scope.activeStory.tasks.length + 1);
-        $scope.activeStory.tasks.push(JSON.parse(JSON.stringify($scope.task)));
+        $scope.activeStory.addTask($scope.task, true);
         newTask();
         $scope.newTaskModal.modal('hide');
         //TODO save timeout (10s?) + ng-disabled on save button (when saving)
@@ -114,7 +117,13 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
     };
 
     $scope.edit = function() {
-        $scope.unsaved = true;
+        $scope.unsaved = false;
+        for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
+            $scope.unsaved = $scope.iteration.stories[i].isUnsaved();
+            if ($scope.unsaved) {
+                break;
+            }
+        }
         //TODO save timeout (10s?) + ng-disabled on save button (when saving)
     };
 

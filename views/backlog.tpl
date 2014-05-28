@@ -1,5 +1,5 @@
 <p class="clearfix buttons-nav">
-    <button type="button" class="btn btn-info pull-right" ng-click="saveStories()" ng-show="unsaved" ng-disabled="editStoryForm.$invalid">Save</button>
+    <button type="button" class="btn btn-warning pull-right" ng-click="saveStories()" ng-show="unsaved" ng-disabled="editStoryForm.$invalid">Save</button>
     <button type="button" class="btn pull-right" ng-click="sortable = !sortable" ng-show="stories.length !== 0 && !planning" ng-class="{ 'btn-info': !sortable, 'btn-success': sortable }">Sort</button>
     <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#new-story-modal" ng-show="!planning">Add new</button>
     <button type="button" class="btn btn-info pull-right" ng-disabled="unsaved||sortable" ng-click="planRelease()" ng-show="stories.length !== 0 && !planning">Plan release</button>
@@ -31,25 +31,25 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Title</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" ng-model="story.title" ng-change="edit()" ng-readonly="planning" required />
+                                <input type="text" class="form-control" ng-model="story.title" ng-value-change="edit()" ng-class="{ changed: story._title }" ng-readonly="planning" required />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Estimate</label>
                             <div class="col-xs-3">
-                                <input type="number" min="1" class="form-control" ng-model="story.estimate" ng-change="edit()" ng-readonly="planning" required />
+                                <input type="number" min="1" class="form-control" ng-model="story.estimate" ng-value-change="edit()" ng-class="{ changed: story._estimate }" ng-readonly="planning" required />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Epic</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" ng-model="story.epic" ng-change="edit()" ng-readonly="planning" />
+                                <input type="text" class="form-control" ng-model="story.epic" ng-value-change="edit()" ng-class="{ changed: story._epic }" ng-readonly="planning" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Details</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" rows="3" ng-model="story.details" ng-change="edit()" ng-readonly="planning"></textarea>
+                                <textarea class="form-control" rows="3" ng-model="story.details" ng-value-change="edit()" ng-class="{ changed: story._details }" ng-readonly="planning"></textarea>
                             </div>
                         </div>
                         <fieldset class="tasks">
@@ -61,15 +61,15 @@
                             <div class="task" ng-repeat="task in story.tasks">
                                 <div class="form-group">
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="task.title" ng-change="edit()" ng-readonly="planning" placeholder="Title" required />
+                                        <input type="text" class="form-control" ng-model="task.title" ng-value-change="edit()" ng-class="{ changed: task._title }" ng-readonly="planning" placeholder="Title" required />
                                     </div>
                                     <div class="col-sm-3 col-sm-offset-1">
-                                        <input type="number" min="1" class="form-control" ng-model="task.estimate" ng-change="edit()" ng-readonly="planning" placeholder="Estimate" required />
+                                        <input type="number" min="1" class="form-control" ng-model="task.estimate" ng-value-change="edit()" ng-class="{ changed: task._estimate }" ng-readonly="planning" placeholder="Estimate" required />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <textarea class="form-control" rows="2" ng-model="task.details" ng-change="edit()" ng-readonly="planning" placeholder="Details"></textarea>
+                                        <textarea class="form-control" rows="2" ng-model="task.details" ng-value-change="edit()" ng-class="{ changed: task._details }" ng-readonly="planning" placeholder="Details"></textarea>
                                     </div>
                                 </div>
                             </div>

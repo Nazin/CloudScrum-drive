@@ -1,6 +1,6 @@
 'use strict';
 //TODO on exit -> if unsaved, alert!
-cloudScrum.controller('BacklogController', function BacklogController($scope, $rootScope, $location, $window, $timeout, Google, Flow) {
+cloudScrum.controller('BacklogController', function BacklogController($scope, $rootScope, $location, $window, $timeout, Google, Flow, Story) {
 
     Google.login().then(function() {
         Flow.on(function() {
@@ -41,6 +41,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
 
     $scope.planning = false;
     $scope.unsaved = false;
+    $scope.sorted = false;
     $scope.saving = false;
     $scope.sortable = false;
     $scope.stories = [];
@@ -77,6 +78,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
         update: function() {
             if (!$scope.planning) {
                 $scope.unsaved = true;
+                $scope.sorted = true;
                 //TODO save timeout (10s?) + ng-disabled on save button (when saving)
             }
         },
@@ -87,7 +89,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
     $scope.createStory = function() {
         $scope.unsaved = true;
         $scope.story.id = 'S-' + ($scope.nextStoryId++);
-        $scope.stories.push(JSON.parse(JSON.stringify($scope.story)));
+        $scope.stories.push(new Story($scope.story, true));
         newStory();
         $scope.newStoryModal.modal('hide');
         //TODO save timeout (10s?) + ng-disabled on save button (when saving)
@@ -100,7 +102,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
     $scope.createTask = function() {
         $scope.unsaved = true;
         $scope.task.id = 'T-' + ($scope.activeStory.tasks.length + 1);
-        $scope.activeStory.tasks.push(JSON.parse(JSON.stringify($scope.task)));
+        $scope.activeStory.addTask($scope.task, true);
         newTask();
         $scope.newTaskModal.modal('hide');
         //TODO save timeout (10s?) + ng-disabled on save button (when saving)
@@ -116,6 +118,9 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
 
             Google.saveBacklogStories($scope.stories, Flow.getBacklogId(), Flow.getProjectName()).then(function() {
                 $scope.unsaved = false;
+                for (var i = 0, l = $scope.stories.length; i < l; i++) {
+                    $scope.stories[i].save();
+                }
             }, function(error) {
                 alert('handle error: ' + error); //todo handle error
             }).finally(function() {
@@ -201,6 +206,14 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
     };
 
     $scope.edit = function() {
-        $scope.unsaved = true;
+        $scope.unsaved = $scope.sorted;
+        if (!$scope.unsaved) {
+            for (var i = 0, l = $scope.stories.length; i < l; i++) {
+                $scope.unsaved = $scope.stories[i].isUnsaved();
+                if ($scope.unsaved) {
+                    break;
+                }
+            }
+        }
     };
 });

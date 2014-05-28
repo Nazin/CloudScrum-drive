@@ -1,11 +1,10 @@
 'use strict';
 
-cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout, Configuration) {
+cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout, Configuration, Story) {
 
     var clientId = '641738097836.apps.googleusercontent.com',
         apiKey = 'AIzaSyBduR27RDdEu6gN5ggwi6JFdqANv_xFpLk',
         scopes = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets https://spreadsheets.google.com/feeds/',
-        oldSpreadsheetId = '0AoueeG57xFRRdFNDMl9lQ0JrQVMwQVc2STFxSVpRdUE',
         timeoutTime = 10000,
         isAuthorized = false,
         deferred = $q.defer(),
@@ -641,9 +640,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
 
                     for (j=0; j<n; j++) {
                         val = sheet[XLSX.utils.encode_cell({c: j+1, r: r})].v;
-                        if (typeof val !== 'undefined') {
-                            story[columns[j]] = sheet[XLSX.utils.encode_cell({c: j+1, r: r})].v;
-                        }
+                        story[columns[j]] = typeof val !== 'undefined' ? val : '';
                     }
 
                     tmp2 = parseInt(story['id'].replace('S-', ''));
@@ -652,7 +649,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                     }
 
                     story['tasks'] = [];
-                    stories.push(story);
+                    stories.push(new Story(story));
                 } else {
 
                     var task = {};
@@ -664,10 +661,10 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                         }
                     }
 
-                    tmp = stories[stories.length-1]['tasks'];
-                    task['id'] = 'T-' + (tmp.length+1);
+                    tmp = stories[stories.length-1];
+                    task['id'] = 'T-' + (tmp.tasks.length + 1);
 
-                    tmp.push(task);
+                    tmp.addTask(task);
                 }
 
                 r++;
