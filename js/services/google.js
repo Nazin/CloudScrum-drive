@@ -574,7 +574,12 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                     iterations[i].stories[k]['status'] = storiesStatuses[0];
                 }
                 for (j=0; j<n; j++) {
-                    data[10+k+tasksAdded][j+1].value = typeof iterations[i].stories[k][iterationColumns[j]] === 'undefined' ? '' : iterations[i].stories[k][iterationColumns[j]];
+                    if (iterationColumns[j] === 'effort') {
+                        data[10+k+tasksAdded][j+1].value = 'SUMIF(A:A;"t' + iterations[i].stories[k].id + '";H:H)';
+                        data[10+k+tasksAdded][j+1].metadata.type = 'formula';
+                    } else {
+                        data[10+k+tasksAdded][j+1].value = typeof iterations[i].stories[k][iterationColumns[j]] === 'undefined' ? '' : iterations[i].stories[k][iterationColumns[j]];
+                    }
                     if ((k+tasksAdded%2) === 0) {
                         data[10+k+tasksAdded][j+1].metadata.style = styles.oddCell.id;
                     }
@@ -583,7 +588,12 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                     if (typeof iterations[i].stories[k]['tasks'][t]['status'] === 'undefined') {
                         iterations[i].stories[k]['tasks'][t]['status'] = taskStatuses[0];
                     }
+                    if (typeof iterations[i].stories[k]['tasks'][t]['effort'] === 'undefined') {
+                        iterations[i].stories[k]['tasks'][t]['effort'] = 0;
+                    }
                     ++tasksAdded;
+                    data[10+k+tasksAdded][0].value = 't' + iterations[i].stories[k].id;
+                    data[10+k+tasksAdded][0].metadata.style = styles.taskDefaultCell.id;
                     for (j=0; j<nt; j++) {
                         if (iterationTasksColumns[j] === '') {
                             continue;
@@ -632,7 +642,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
 
         if (typeof sheet[XLSX.utils.encode_cell({c: 3, r: r})] !== 'undefined') {
 
-            while (typeof sheet[XLSX.utils.encode_cell({c: 3, r: r})].v !== 'undefined') {
+            while (typeof sheet[XLSX.utils.encode_cell({c: 3, r: r})] !== 'undefined' && typeof sheet[XLSX.utils.encode_cell({c: 3, r: r})].v !== 'undefined') {
 
                 if (typeof sheet[XLSX.utils.encode_cell({c: 1, r: r})].v !== 'undefined') {
 

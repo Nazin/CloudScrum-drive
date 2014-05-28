@@ -81,7 +81,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
 
         if (story.effort !== effort) {
             story.effort = effort;
-            $scope.edit();
         }
     };
 
