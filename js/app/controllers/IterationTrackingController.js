@@ -3,6 +3,8 @@
 cloudScrum.controller('IterationTrackingController', function IterationTrackingController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
 
     $scope.iteration = {};
+    $scope.activeIteration = 0;
+    $scope.currentIteration = 0;
     $scope.storiesStatusesInfo = Configuration.getStoriesStatuses();
     $scope.tasksStatusesInfo = Configuration.getTasksStatuses();
     $scope.users = [];
@@ -126,6 +128,19 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         //TODO save timeout (10s?) + ng-disabled on save button (when saving)
     };
 
+    $scope.closeIteration = function() {
+        bootbox.confirm('Are you sure you want to close this iteration? All stories which are not accepted will be moved to the next iteration!', function(result) {
+            if (result) {
+                closeIteration(function() {
+                    //growlNotifications.add('Iteration has been closed', 'success', 2000);//TODO notification
+                    $scope.currentIteration++;
+                    $scope.activeIteration++;
+                    $scope.$broadcast('CLOSE_ITERATION', {iteration: $scope.nextIteration, iterations: $scope.iterations});
+                });
+            }
+        });
+    };
+
     $scope.updateStoryPoints = function() {
         $scope.$broadcast('UPDATE_STORY_POINTS', {});
     };
@@ -133,11 +148,51 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
     $scope.loadIterationCallback = function(iteration, iterations) {
         $scope.iteration = iteration;
         $scope.iterations = iterations;
+        $scope.currentIteration = iterations.indexOf(iteration);
+        for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+            if (!$scope.iterations[i].closed) {
+                $scope.activeIteration = i;
+                break;
+            }
+        }
     };
 
     $scope.loadReleaseCallback = function(iteration, iterations, users) {
         $scope.loadIterationCallback(iteration, iterations);
         $scope.users = users;
         $scope.unsaved = false;
+    };
+
+    var closeIteration = function(callback) {
+
+        $rootScope.loading = true;
+
+        Google.getReleaseStories(Flow.getReleaseId()).then(function(data) {
+
+            $scope.iterations = data;
+            $scope.iteration = $scope.iterations[$scope.currentIteration];
+            $scope.nextIteration = $scope.iterations[$scope.currentIteration + 1];
+
+            for (var i = $scope.iteration.stories.length-1; i >= 0 ; i--) {
+                var story = $scope.iteration.stories[i];
+                if (story.status !== Configuration.getAcceptedStatusIndex()) {
+                    $scope.nextIteration.stories.push(story);
+                    $scope.iteration.stories.splice(i, 1);
+                }
+            }
+
+            $scope.iteration.closed = true;
+
+            Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
+                callback();
+            }, function(error) {
+                alert('handle error: ' + error); //todo handle error
+            }).finally(function() {
+                $rootScope.loading = false;
+                $scope.saving = false;
+            });
+        }, function(error) {
+            alert('handle error: ' + error); //todo handle error
+        });
     };
 });

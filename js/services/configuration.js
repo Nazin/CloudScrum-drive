@@ -5,10 +5,15 @@ cloudScrum.service('Configuration', function Configuration() {
     var self = this;
 
     self.getStoriesStatuses = function() {
-        return ['Not started', 'In progress', 'Completed', 'Testing', 'Blocked', 'Accepted']; //TODO grab from google drive?
+        return ['', 'In progress', 'Blocked', 'Completed', 'Accepted']; //TODO grab from google drive?
     };
 
     self.getTasksStatuses = function() {
-        return ['Not started', 'In progress', 'Blocked', 'Completed']; //TODO grab from google drive?
+        return ['', 'In progress', 'Testing', 'Blocked', 'Completed']; //TODO grab from google drive?
+    };
+
+    self.getAcceptedStatusIndex = function() {
+        var storiesStatuses = self.getStoriesStatuses();
+        return storiesStatuses[storiesStatuses.length - 1];
     };
 });

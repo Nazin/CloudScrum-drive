@@ -5,7 +5,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
     var clientId = '641738097836.apps.googleusercontent.com',
         apiKey = 'AIzaSyBduR27RDdEu6gN5ggwi6JFdqANv_xFpLk',
         scopes = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets https://spreadsheets.google.com/feeds/',
-        timeoutTime = 10000,
+        timeoutTime = 30000,
         isAuthorized = false,
         deferred = $q.defer(),
         deferred2,
@@ -122,7 +122,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                 var sheet = wb.Sheets[sheetName], data = readStories(XLSX, sheet, 10, iterationColumns, iterationTasksColumns), closed = sheet[XLSX.utils.encode_cell({c: 8, r: 4})].v === 'Yes';
 
                 iterations.push({
-                    name: sheet[XLSX.utils.encode_cell({c: 1, r: 1})].v + (closed ? ' (closed)' : ''),
+                    name: sheet[XLSX.utils.encode_cell({c: 1, r: 1})].v,
                     closed: closed,
                     startDate: sheet[XLSX.utils.encode_cell({c: 2, r: 4})].v,
                     endDate: sheet[XLSX.utils.encode_cell({c: 5, r: 4})].v,
@@ -518,7 +518,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
 
         for (i=0; i < l; i++) {
 
-            var iteration = 'Iteration ' + (i+1), worksheet = workbook.createWorksheet({name: iteration}), s = iterations[i].stories.length, maxRows = 20 + s, t, tl, tasksAdded = 0;
+            var iteration = 'Iteration ' + (i+1), worksheet = workbook.createWorksheet({name: iteration + (iterations[i].closed ? ' (Closed)' : '')}), s = iterations[i].stories.length, maxRows = 20 + s, t, tl, tasksAdded = 0;
 
             worksheet.setColumns([
                 {width: 2},

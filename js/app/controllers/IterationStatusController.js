@@ -22,6 +22,12 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
         $scope.updateStoryPoints();
     });
 
+    $scope.$on('CLOSE_ITERATION', function(message, data) {
+        $scope.iteration = data.iteration;
+        $scope.iterations = data.iterations;
+        $scope.updateStoryPoints();
+    });
+
     $scope.changeRelease = function() {
 
         if ($scope.unsaved && !confirm('There are some unsaved changes which you will lost! Do you really want to change the release?')) {

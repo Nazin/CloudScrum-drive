@@ -4,7 +4,7 @@
             <select class="form-control input-sm" ng-model="release" ng-options="release.name for (id, release) in releases" ng-change="changeRelease(this)" title="Change release"></select>
         </div>
         <div class="form-group">
-            <select class="form-control input-sm" ng-model="iteration" ng-options="iteration.name for iteration in iterations" ng-change="updateStoryPoints()" title="Change iteration"></select>
+            <select class="form-control input-sm" ng-model="iteration" ng-options="iteration.name + (iteration.closed ? ' (Closed)' : '') for iteration in iterations" ng-change="updateStoryPoints()" title="Change iteration"></select>
         </div>
     </form>
 
@@ -40,6 +40,7 @@
 </div>
 
 <p class="clearfix buttons-nav">
+    <button type="button" class="btn btn-info pull-right" ng-click="closeIteration()" ng-show="currentIteration === activeIteration && currentIteration !== iterations.length - 1" ng-disabled="unsaved">Close iteration</button>
     <button type="button" class="btn btn-info pull-right" ng-click="saveRelease()" ng-show="unsaved" ng-disabled="editIterationForm.$invalid">Save</button>
 </p>
 
