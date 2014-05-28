@@ -57,24 +57,24 @@
     <div class="modal fade" id="new-company-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-hide="companies.length===0">&times;</button>
-                    <h4 class="modal-title">New company</h4>
-                </div>
-                <div class="modal-body">
-                    <form role="form" class="form-horizontal" name="newCompanyForm" ng-submit="newCompanyForm.$valid && createCompany()" novalidate>
+                <form role="form" class="form-horizontal" name="newCompanyForm" novalidate>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-hide="companies.length===0">&times;</button>
+                        <h4 class="modal-title">New company</h4>
+                    </div>
+                    <div class="modal-body">
                         <div class="form-group">
                             <label for="companyName" class="col-sm-2 control-label">Name</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="companyName" ng-model="companyName" ng-pattern="/^[a-zA-Z0-9_\-. ]+$/" required>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-hide="companies.length===0">Close</button>
-                    <button type="button" class="btn btn-primary" ng-disabled="newCompanyForm.$invalid" ng-click="createCompany()">Save</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-hide="companies.length===0">Close</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="newCompanyForm.$invalid" ng-click="createCompany()">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

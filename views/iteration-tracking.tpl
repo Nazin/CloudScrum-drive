@@ -116,12 +116,12 @@
 <div class="modal fade" id="new-task-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">New task</h4>
-            </div>
-            <div class="modal-body">
-                <form role="form" class="form-horizontal" name="newTaskForm" ng-submit="newTaskForm.$valid && createTask()" novalidate>
+            <form role="form" class="form-horizontal" name="newTaskForm" novalidate>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">New task</h4>
+                </div>
+                <div class="modal-body">
                     <div class="form-group">
                         <label for="taskTitle" class="col-sm-2 control-label">Title</label>
                         <div class="col-sm-10">
@@ -154,12 +154,12 @@
                             <textarea class="form-control" rows="3" id="taskDetails" ng-model="task.details"></textarea>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" ng-disabled="newTaskForm.$invalid" ng-click="createTask()">Add</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" ng-disabled="newTaskForm.$invalid" ng-click="createTask()">Add</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -167,12 +167,12 @@
 <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-disabled="editForm.$invalid">&times;</button>
-                <h4 class="modal-title">{{editItemStory ? 'Story' : 'Task'}} details</h4>
-            </div>
-            <div class="modal-body">
-                <form role="form" class="form-horizontal" name="editForm" ng-submit="editForm.$valid && saveEditedItem()" novalidate>
+            <form role="form" class="form-horizontal" name="editForm" novalidate>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-disabled="editForm.$invalid">&times;</button>
+                    <h4 class="modal-title">{{editItemStory ? 'Story' : 'Task'}} details</h4>
+                </div>
+                <div class="modal-body">
                     <div class="form-group">
                         <label for="editItemTitle" class="col-sm-2 control-label">Title</label>
                         <div class="col-sm-10">
@@ -217,11 +217,11 @@
                             <textarea class="form-control" rows="3" id="editItemDetails" ng-model="editItem.details" ng-value-change="edit()" ng-class="{ changed: editItem._details }"></textarea>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" ng-disabled="editForm.$invalid" data-dismiss="modal">Close</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-disabled="editForm.$invalid" data-dismiss="modal">Close</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
