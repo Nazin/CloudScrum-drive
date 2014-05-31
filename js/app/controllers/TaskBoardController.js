@@ -1,6 +1,6 @@
 'use strict';
 
-cloudScrum.controller('StoryBoardController', function StoryBoardController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
+cloudScrum.controller('TaskBoardController', function TaskBoardController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
 
     $scope.storiesStatusesInfo = Configuration.getStoriesStatuses();
     $scope.statuses = [];
