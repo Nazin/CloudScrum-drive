@@ -2,12 +2,14 @@
 
 cloudScrum.controller('TaskBoardController', function TaskBoardController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
 
+    $scope.tasksStatuses = Configuration.getTasksStatuses();
     $scope.storiesStatusesInfo = Configuration.getStoriesStatuses();
-    $scope.statuses = [];
     $scope.iteration = {};
     $scope.users = [];
 
-    var statusesInverted = _.invert($scope.storiesStatusesInfo);
+    $scope.unsaved = false;
+
+    var statusesInverted = _.invert($scope.tasksStatuses);
 
     Google.login().then(function() {
         Flow.on(function() {
@@ -34,32 +36,100 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
     };
 
     $scope.loadIterationCallback = function(iteration, iterations) {
-        updateIteration(iteration, iterations);
+        $scope.iteration = iteration;
+        $scope.iterations = iterations;
+        transferStoriesToTaskBoard();
     };
 
     $scope.loadReleaseCallback = function(iteration, iterations, users) {
         $scope.users = users;
-        updateIteration(iteration, iterations);
+        $scope.usersMapping = {};
+        for (var i = 0, l = $scope.users.length; i < l; i++) {
+            $scope.usersMapping[$scope.users[i].emailAddress] = $scope.users[i].name;
+        }
+        $scope.loadIterationCallback(iteration, iterations);
     };
 
-    var updateIteration = function(iteration, iterations) {
-
-        $scope.iteration = iteration;
-        $scope.iterations = iterations;
-
-        $scope.statuses = [];
-
-        for (var j=0; j<$scope.storiesStatusesInfo.length; j++) {
-            $scope.statuses.push([]);
-        }
-
-        for (var i=0; i<$scope.iteration.stories.length; i++) {
-            var status = $.trim($scope.iteration.stories[i].status);
-            if (typeof status !== 'undefined' && status !== '' && typeof statusesInverted[status] !== 'undefined') {
-                $scope.statuses[statusesInverted[status]].push($scope.iteration.stories[i]);
-            } else {
-                $scope.statuses[0].push($scope.iteration.stories[i]);
+    $scope.edit = function() {
+        $scope.unsaved = false;
+        for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
+            $scope.unsaved = $scope.iteration.stories[i].isUnsaved();
+            if ($scope.unsaved) {
+                break;
             }
         }
     };
+
+    $scope.saveRelease = function() {
+
+        $rootScope.loading = true;
+
+        if (!$scope.saving) {
+
+            $scope.saving = true;
+
+            Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
+                $scope.unsaved = false;
+                for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
+                    $scope.iteration.stories[i].save();
+                }
+            }, function(error) {
+                alert('handle error: ' + error); //todo handle error
+            }).finally(function() {
+                $rootScope.loading = false;
+                $scope.saving = false;
+            });
+        }
+    };
+
+    var transferStoriesToTaskBoard = function() {
+        var stories = $scope.iteration.stories;
+        for (var i = 0, l = stories.length; i < l; i++) {
+            var story = stories[i];
+            story.tasksByStatus = [];
+            for (var k = 0, lk = $scope.tasksStatuses.length; k < lk; k++) {
+                story.tasksByStatus.push([]);
+            }
+            for (var j = 0, lj = story.tasks.length; j < lj; j++) {
+                story.tasks[j].id = j;
+                story.tasksByStatus[statusesInverted[story.tasks[j].status]].push(story.tasks[j]);
+            }
+            updateSortableOptions(story);
+        }
+    };
+
+    var orderChanged = false, changedToStatus = 0;
+
+    var updateSortableOptions = function(story) {
+        $scope.sortableOptions[story.id] = {
+            start: function() {
+                orderChanged = false;
+            },
+            stop: function(event, ui) {
+                if (orderChanged) {
+
+                    var id = ui.item.data('story'), tid = ui.item.data('task'), task = $('.task[data-story=' + id + '][data-task=' + tid + ']'),
+                        storyObj = $scope.iteration.stories[ui.item.data('story-index')],
+                        taskObj = storyObj.tasks[tid];
+
+                    taskObj.status = $scope.tasksStatuses[changedToStatus];
+
+                    if (typeof taskObj.owner === 'undefined' || taskObj.owner === '' || taskObj.owner === null) {
+                        taskObj.owner = Google.getUserEmail();
+                    }
+
+                    $scope.edit();
+                }
+            },
+            update: function(event) {
+                orderChanged = true;
+                changedToStatus = parseInt($(event.target).data('status'));
+            },
+            connectWith: '.tasks_' + story.id,
+            items: '.task',
+            cancel: '.disabled'
+        };
+    };
+
+    $scope.sortableOptions = [];
 });

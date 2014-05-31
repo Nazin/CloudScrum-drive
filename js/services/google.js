@@ -10,6 +10,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
         deferred = $q.defer(),
         deferred2,
         driveJSLoaded = false,
+        userEmail = '',
         self = this;
 
     self.ERROR_TIMEOUT = -1;
@@ -65,6 +66,10 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
             if (typeof deferred2 !== 'undefined') {
                 deferred2.resolve();
             }
+
+            self.onDrive(function() {
+                getUserEmail();
+            });
         } else {
 
             isAuthorized = false;
@@ -198,6 +203,10 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
         return deferred.promise;
     };
 
+    self.getUserEmail = function() {
+        return userEmail;
+    };
+
     self.getPermissionsList = function(fileId) {
 
         var deferred = $q.defer();
@@ -268,6 +277,12 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
         });
 
         return deferred2.promise;
+    };
+
+    var getUserEmail = function() {
+        gapi.client.drive.about.get().execute(function(resp) {
+            userEmail = resp.user.emailAddress;
+        });
     };
 
     var downloadExcelFile = function(id, callback) {
