@@ -11,7 +11,7 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
 
     var oldReleaseSelected = undefined;
 
-    $scope.$on('PARENT_READY', function(event, data){
+    $scope.$on('PARENT_READY', function(event, data) {
         loadRelease(data.releaseId);
         Google.getPermissionsList(Flow.getCompanyId()).then(function(users) {
             $scope.users = users;
