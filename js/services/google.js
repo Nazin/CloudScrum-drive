@@ -668,6 +668,10 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                         story[columns[j]] = typeof val !== 'undefined' ? val : '';
                     }
 
+                    if (typeof story['effort'] !== 'undefined') {
+                        story['effort'] = parseInt(story['effort']);
+                    }
+
                     tmp2 = parseInt(story['id'].replace('S-', ''));
                     if (tmp2 > maxId) {
                         maxId = tmp2;

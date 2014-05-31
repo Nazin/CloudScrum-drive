@@ -24,70 +24,13 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
 
     newTask();
 
-    Google.login().then(function() {
-        Flow.on(function() {
-            var releaseId = Flow.getReleaseId();
-            if (typeof releaseId === 'undefined') {
-                $timeout(function() {
-                    $location.path('/backlog');
-                }, 100);//instant redirect is causing some unexpected behaviour with sortable widget
-            } else {
-                $timeout(function() {
-                    $scope.$apply(function() {
-                        $scope.$broadcast('PARENT_READY', {
-                            releaseId: releaseId
-                        });
-                    });
-                });
-            }
-        });
-    });
-
-    $scope.saveRelease = function() {
-
-        $rootScope.loading = true;
-
-        if (!$scope.saving) {
-
-            $scope.saving = true;
-
-            Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
-                $scope.unsaved = false;
-                for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
-                    $scope.iteration.stories[i].save();
-                }
-            }, function(error) {
-                alert('handle error: ' + error); //todo handle error
-            }).finally(function() {
-                $rootScope.loading = false;
-                $scope.saving = false;
-            });
-        }
+    $scope.setStoryCallback = function(story) {
+        $scope.activeStory = story;
     };
 
     $scope.toggleTasks = function($event) {
         var tmp = $($event.currentTarget);
         tmp.parents('tbody').toggleClass('active');
-    };
-
-    $scope.updateEffort = function(story) {
-
-        if (typeof story.effort === 'undefined' || story.effort === null) {
-            story.effort = 0;
-        }
-
-        var effort = 0;
-        for (var i=0; i<story.tasks.length; i++) {
-            effort += story.tasks[i]['effort'] ? parseInt(story.tasks[i]['effort']) : 0;
-        }
-
-        if (story.effort !== effort) {
-            story.effort = effort;
-        }
-    };
-
-    $scope.setStory = function(story) {
-        $scope.activeStory = story;
     };
 
     $scope.createTask = function() {
@@ -96,31 +39,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         $scope.activeStory.addTask($scope.task, true);
         newTask();
         $scope.newTaskModal.modal('hide');
-        //TODO save timeout (10s?) + ng-disabled on save button (when saving)
-    };
-
-    $scope.showStoryDetails = function(story) {
-        $scope.editItem = story;
-        $scope.editItemStory = true;
-        $scope.editItemStatuses = $scope.storiesStatusesInfo;
-        showEditForm();
-    };
-
-    $scope.showTaskDetails = function(task) {
-        $scope.editItem = task;
-        $scope.editItemStory = false;
-        $scope.editItemStatuses = $scope.tasksStatusesInfo;
-        showEditForm();
-    };
-
-    $scope.edit = function() {
-        $scope.unsaved = false;
-        for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
-            $scope.unsaved = $scope.iteration.stories[i].isUnsaved();
-            if ($scope.unsaved) {
-                break;
-            }
-        }
         //TODO save timeout (10s?) + ng-disabled on save button (when saving)
     };
 
@@ -146,22 +64,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
                 });
             }
         });
-    };
-
-    $scope.updateStoryPoints = function() {
-        $scope.$broadcast('UPDATE_STORY_POINTS', {});
-    };
-
-    $scope.updateTaskStatus = function(story, isTask) {
-        isTask = typeof isTask === 'undefined' ? true : isTask;
-        if (isTask) {
-            for (var i = 0, l = story.tasks.length; i < l; i++) {
-                if (story.tasks[i].status !== $scope.tasksStatusesInfo[$scope.tasksStatusesInfo.length - 1]) {
-                    return;
-                }
-            }
-            story.status = Configuration.getUpdateStoryStatusOnAllTaskCompletion();
-        }
     };
 
     $scope.loadIterationCallback = function(iteration, iterations) {
@@ -260,10 +162,5 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         }, function(error) {
             alert('handle error: ' + error); //todo handle error
         });
-    };
-
-    var showEditForm = function() {
-        $scope.editModal = $scope.editModal || $('#edit-modal');
-        $scope.editModal.modal('show');
     };
 });

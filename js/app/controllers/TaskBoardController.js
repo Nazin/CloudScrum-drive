@@ -12,29 +12,7 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
 
     var statusesInverted = _.invert($scope.tasksStatuses);
 
-    Google.login().then(function() {
-        Flow.on(function() {
-            var releaseId = Flow.getReleaseId();
-            if (typeof releaseId === 'undefined') {
-                $timeout(function() {
-                    $location.path('/backlog');
-                }, 100);//instant redirect is causing some unexpected behaviour with sortable widget
-            } else {
-                $timeout(function() {
-                    $scope.$apply(function() {
-                        $scope.$broadcast('PARENT_READY', {
-                            releaseId: releaseId
-                        });
-                    });
-                });
-            }
-        });
-    });
 
-    $scope.sortableOptions = {
-        connectWith: '.stories',
-        items: '.story'
-    };
 
     $scope.loadIterationCallback = function(iteration, iterations) {
         $scope.iteration = iteration;
@@ -49,56 +27,6 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
             $scope.usersMapping[$scope.users[i].emailAddress] = $scope.users[i].name;
         }
         $scope.loadIterationCallback(iteration, iterations);
-    };
-
-    $scope.edit = function() {
-        $scope.unsaved = false;
-        for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
-            $scope.unsaved = $scope.iteration.stories[i].isUnsaved();
-            if ($scope.unsaved) {
-                break;
-            }
-        }
-    };
-
-    $scope.saveRelease = function() {
-
-        $rootScope.loading = true;
-
-        if (!$scope.saving) {
-
-            $scope.saving = true;
-
-            Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
-                $scope.unsaved = false;
-                for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
-                    $scope.iteration.stories[i].save();
-                }
-            }, function(error) {
-                alert('handle error: ' + error); //todo handle error
-            }).finally(function() {
-                $rootScope.loading = false;
-                $scope.saving = false;
-            });
-        }
-    };
-
-    $scope.setStory = function(story) {
-        $scope.activeStory = story;
-    };
-
-    $scope.showStoryDetails = function(story) {
-        $scope.editItem = story;
-        $scope.editItemStory = true;
-        $scope.editItemStatuses = $scope.storiesStatusesInfo;
-        showEditForm();
-    };
-
-    $scope.showTaskDetails = function(task) {
-        $scope.editItem = task;
-        $scope.editItemStory = false;
-        $scope.editItemStatuses = $scope.tasksStatusesInfo;
-        showEditForm();
     };
 
     var transferStoriesToTaskBoard = function() {
@@ -137,7 +65,7 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
                         taskObj.owner = Google.getUserEmail();
                     }
 
-                    $scope.edit();
+                    $scope.$broadcast('EDIT');
 
                     for (var i = 0, l = story.tasks.length; i < l; i++) {
                         if (story.tasks[i].status !== $scope.tasksStatuses[$scope.tasksStatuses.length - 1]) {
@@ -158,9 +86,4 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
     };
 
     $scope.sortableOptions = [];
-
-    var showEditForm = function() {
-        $scope.editModal = $scope.editModal || $('#edit-modal');
-        $scope.editModal.modal('show');
-    };
 });
