@@ -119,6 +119,13 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
                     }
 
                     $scope.edit();
+
+                    for (var i = 0, l = story.tasks.length; i < l; i++) {
+                        if (story.tasks[i].status !== $scope.tasksStatuses[$scope.tasksStatuses.length - 1]) {
+                            return;
+                        }
+                    }
+                    story.status = Configuration.getUpdateStoryStatusOnAllTaskCompletion();
                 }
             },
             update: function(event) {
