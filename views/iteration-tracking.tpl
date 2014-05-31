@@ -41,6 +41,7 @@
 
 <p class="clearfix buttons-nav">
     <button type="button" class="btn btn-info pull-right" ng-click="closeIteration()" ng-show="currentIteration === activeIteration && currentIteration !== iterations.length - 1" ng-disabled="unsaved">Close iteration</button>
+    <button type="button" class="btn btn-info pull-right" ng-click="closeRelease()" ng-show="!iteration.closed && currentIteration === activeIteration && currentIteration === iterations.length - 1" ng-disabled="unsaved">Close release</button>
     <button type="button" class="btn btn-info pull-right" ng-click="saveRelease()" ng-show="unsaved" ng-disabled="editIterationForm.$invalid">Save</button>
 </p>
 

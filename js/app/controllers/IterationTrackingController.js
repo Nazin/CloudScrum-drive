@@ -141,6 +141,17 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         });
     };
 
+    $scope.closeRelease = function() {
+        bootbox.confirm('Are you sure you want to close this release? All stories which are not accepted will be moved back to the backlog!', function(result) {
+            if (result) {
+                closeRelease(function() {
+                    //growlNotifications.add('Release has been closed', 'success', 2000);//TODO notification
+                    $location.path('/backlog');
+                });
+            }
+        });
+    };
+
     $scope.updateStoryPoints = function() {
         $scope.$broadcast('UPDATE_STORY_POINTS', {});
     };
@@ -207,4 +218,51 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
             alert('handle error: ' + error); //todo handle error
         });
     };
+
+    var closeRelease = function(callback) {
+
+        $rootScope.loading = true;
+
+        Google.getReleaseStories(Flow.getReleaseId()).then(function(data) {
+
+            var addToBacklog = [];
+
+            $scope.iterations = data;
+            $scope.iteration = $scope.iterations[$scope.currentIteration];
+
+            for (var i = $scope.iteration.stories.length-1; i >= 0 ; i--) {
+                var story = $scope.iteration.stories[i];
+                if (story.status !== Configuration.getAcceptedStatusIndex()) {
+                    addToBacklog.push(story);
+                    $scope.iteration.stories.splice(i, 1);
+                }
+            }
+
+            $scope.iteration.closed = true;
+
+            Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
+
+                Google.getBacklogStories(Flow.getBacklogId()).then(function(data) {
+
+                    var stories = data.stories;
+                    stories = stories.concat(addToBacklog);
+
+                    Google.saveBacklogStories(stories, Flow.getBacklogId(), Flow.getProjectName()).then(function() {
+                        callback();
+                    }, function(error) {
+                        alert('handle error: ' + error); //todo handle error
+                    }).finally(function() {
+                        $rootScope.loading = false;
+                        $scope.saving = false;
+                    });
+                }, function(error) {
+                    alert('handle backlog error: ' + error); //todo handle error
+                });
+            }, function(error) {
+                alert('handle error: ' + error); //todo handle error
+            });
+        }, function(error) {
+            alert('handle error: ' + error); //todo handle error
+        });
+    }
 });

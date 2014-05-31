@@ -638,7 +638,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
 
     var readStories = function(XLSX, sheet, startRow, columns, tasksColumns) {
 
-        var r = startRow, val, j, tmp, tmp2, maxId = 0, stories = [], n = columns.length, nt = tasksColumns.length;
+        var r = startRow, val, j, tmp, tmp2, maxId = 0, stories = [], n = columns.length, nt = tasksColumns.length, tasksStatuses = Configuration.getTasksStatuses();
 
         if (typeof sheet[XLSX.utils.encode_cell({c: 3, r: r})] !== 'undefined') {
 
@@ -669,6 +669,10 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                         if (typeof val !== 'undefined' && tasksColumns[j] !== '') {
                             task[tasksColumns[j]] = sheet[XLSX.utils.encode_cell({c: j+1, r: r})].v;
                         }
+                    }
+
+                    if (typeof task['status'] === 'undefined') {
+                        task['status'] = tasksStatuses[0];
                     }
 
                     tmp = stories[stories.length-1];
