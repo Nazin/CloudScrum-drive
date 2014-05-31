@@ -12,8 +12,6 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
 
     var statusesInverted = _.invert($scope.tasksStatuses);
 
-
-
     $scope.loadIterationCallback = function(iteration, iterations) {
         $scope.iteration = iteration;
         $scope.iterations = iterations;
