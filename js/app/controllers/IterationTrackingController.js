@@ -145,6 +145,18 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         $scope.$broadcast('UPDATE_STORY_POINTS', {});
     };
 
+    $scope.updateTaskStatus = function(story, isTask) {
+        isTask = typeof isTask === 'undefined' ? true : isTask;
+        if (isTask) {
+            for (var i = 0, l = story.tasks.length; i < l; i++) {
+                if (story.tasks[i].status !== $scope.tasksStatusesInfo[$scope.tasksStatusesInfo.length - 1]) {
+                    return;
+                }
+            }
+            story.status = Configuration.getUpdateStoryStatusOnAllTaskCompletion();
+        }
+    };
+
     $scope.loadIterationCallback = function(iteration, iterations) {
         $scope.iteration = iteration;
         $scope.iterations = iterations;

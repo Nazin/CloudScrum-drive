@@ -16,4 +16,9 @@ cloudScrum.service('Configuration', function Configuration() {
         var storiesStatuses = self.getStoriesStatuses();
         return storiesStatuses[storiesStatuses.length - 1];
     };
+
+    self.getUpdateStoryStatusOnAllTaskCompletion = function() {
+        var storiesStatuses = self.getStoriesStatuses();
+        return storiesStatuses[storiesStatuses.length - 2];
+    };
 });

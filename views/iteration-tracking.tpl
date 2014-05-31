@@ -95,7 +95,7 @@
                 </td>
                 <td>
                     <div class="form-group">
-                        <select class="form-control input-sm" ng-model="task.status" ng-options="status for status in tasksStatusesInfo" ng-select-value-change="edit()" ng-class="{ changed: task._status }" ng-disabled="iteration.closed"></select>
+                        <select class="form-control input-sm" ng-model="task.status" ng-options="status for status in tasksStatusesInfo" ng-select-value-change="edit()" ng-change="updateTaskStatus(story)" ng-class="{ changed: task._status }" ng-disabled="iteration.closed"></select>
                     </div>
                 </td>
                 <td>{{task.estimate}} h</td>
@@ -209,7 +209,7 @@
                     <div class="form-group">
                         <label for="editItemStatus" class="col-sm-2 control-label">Status</label>
                         <div class="col-sm-10">
-                            <select class="form-control" id="editItemStatus" ng-model="editItem.status" ng-select-value-change="edit();" ng-change="updateStoryPoints();" ng-class="{ changed: editItem._status }" ng-disabled="iteration.closed" ng-options="status for status in editItemStatuses"></select>
+                            <select class="form-control" id="editItemStatus" ng-model="editItem.status" ng-select-value-change="edit();" ng-change="updateTaskStatus(story);updateStoryPoints(activeStory, !editItemStory);" ng-class="{ changed: editItem._status }" ng-disabled="iteration.closed" ng-options="status for status in editItemStatuses"></select>
                         </div>
                     </div>
                     <div class="form-group">
