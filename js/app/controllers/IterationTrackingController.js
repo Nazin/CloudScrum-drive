@@ -2,6 +2,7 @@
 
 cloudScrum.controller('IterationTrackingController', function IterationTrackingController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
 
+    $scope.hideTaskStatusInEditModal = false;
     $scope.iteration = {};
     $scope.activeIteration = 0;
     $scope.currentIteration = 0;
@@ -12,7 +13,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
     $scope.saving = false;
     $scope.task = {};
     $scope.newTaskModal = $('#new-task-modal');
-    $scope.editModal = $('#edit-modal');
 
     var newTask = function() {
         $scope.task = {
@@ -20,10 +20,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
             details: '',
             effort: 0
         };
-    };
-
-    var showEditForm = function() {
-        $scope.editModal.modal('show');
     };
 
     newTask();
@@ -101,10 +97,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         newTask();
         $scope.newTaskModal.modal('hide');
         //TODO save timeout (10s?) + ng-disabled on save button (when saving)
-    };
-
-    $scope.saveEditedItem = function() {
-        $scope.editModal.modal('hide');
     };
 
     $scope.showStoryDetails = function(story) {
@@ -268,5 +260,10 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         }, function(error) {
             alert('handle error: ' + error); //todo handle error
         });
-    }
+    };
+
+    var showEditForm = function() {
+        $scope.editModal = $scope.editModal || $('#edit-modal');
+        $scope.editModal.modal('show');
+    };
 });

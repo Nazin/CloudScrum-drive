@@ -32,3 +32,5 @@
         </div>
     </div>
 </div>
+
+<div ng-include src="'views/partial/edit-modal.tpl'"></div>

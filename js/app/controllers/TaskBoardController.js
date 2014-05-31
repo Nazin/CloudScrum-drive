@@ -2,6 +2,7 @@
 
 cloudScrum.controller('TaskBoardController', function TaskBoardController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
 
+    $scope.hideTaskStatusInEditModal = true;
     $scope.tasksStatuses = Configuration.getTasksStatuses();
     $scope.storiesStatusesInfo = Configuration.getStoriesStatuses();
     $scope.iteration = {};
@@ -82,6 +83,24 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
         }
     };
 
+    $scope.setStory = function(story) {
+        $scope.activeStory = story;
+    };
+
+    $scope.showStoryDetails = function(story) {
+        $scope.editItem = story;
+        $scope.editItemStory = true;
+        $scope.editItemStatuses = $scope.storiesStatusesInfo;
+        showEditForm();
+    };
+
+    $scope.showTaskDetails = function(task) {
+        $scope.editItem = task;
+        $scope.editItemStory = false;
+        $scope.editItemStatuses = $scope.tasksStatusesInfo;
+        showEditForm();
+    };
+
     var transferStoriesToTaskBoard = function() {
         var stories = $scope.iteration.stories;
         for (var i = 0, l = stories.length; i < l; i++) {
@@ -139,4 +158,9 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
     };
 
     $scope.sortableOptions = [];
+
+    var showEditForm = function() {
+        $scope.editModal = $scope.editModal || $('#edit-modal');
+        $scope.editModal.modal('show');
+    };
 });
