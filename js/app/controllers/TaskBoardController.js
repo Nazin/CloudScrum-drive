@@ -17,8 +17,12 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
                     $location.path('/backlog');
                 }, 100);//instant redirect is causing some unexpected behaviour with sortable widget
             } else {
-                $scope.$broadcast('PARENT_READY', {
-                    releaseId: releaseId
+                $timeout(function() {
+                    $scope.$apply(function() {
+                        $scope.$broadcast('PARENT_READY', {
+                            releaseId: releaseId
+                        });
+                    });
                 });
             }
         });
