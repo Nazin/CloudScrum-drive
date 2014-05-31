@@ -21,9 +21,9 @@ cloudScrum.config(function($routeProvider) {
         controller: 'BacklogController',
         templateUrl: 'views/backlog.tpl',
         title: 'Backlog'
-    }).when('/story-board', {
-        controller: 'StoryBoardController',
-        templateUrl: 'views/story-board.tpl',
+    }).when('/task-board', {
+        controller: 'TaskBoardController',
+        templateUrl: 'views/task-board.tpl',
         title: 'Story board'
     }).when('/iteration-tracking', {
         controller: 'IterationTrackingController',
