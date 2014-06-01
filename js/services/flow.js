@@ -1,6 +1,6 @@
 'use strict';
 
-cloudScrum.service('Flow', function Flow($q, $localStorage, $rootScope, $timeout, $location, Google) {
+cloudScrum.service('Flow', function Flow($q, $localStorage, $rootScope, $timeout, $location, Google, growlNotifications) {
 
     var flowFileId, companyId, companyName, projectId, releaseId, projects = {}, downloaded = false, self = this;
 
@@ -139,9 +139,10 @@ cloudScrum.service('Flow', function Flow($q, $localStorage, $rootScope, $timeout
                     updateNamesOnRootScope();
                 }, function(error) {
                     if (error === Google.MISSING_FLOW_FILE) {
+                        growlNotifications.add('Flow file is missing!', 'error', 2000);
                         $location.path('/projects');
                     } else {
-                        alert('handle flow error: ' + error); //todo
+                        $rootScope.handleError(error);
                         $rootScope.loading = false;
                     }
                 });

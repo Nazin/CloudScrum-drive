@@ -105,13 +105,13 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
             Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
                 callback();
             }, function(error) {
-                alert('handle error: ' + error); //todo handle error
+                $rootScope.handleError(error);
             }).finally(function() {
                 $rootScope.loading = false;
                 $scope.saving = false;
             });
         }, function(error) {
-            alert('handle error: ' + error); //todo handle error
+            $rootScope.handleError(error);
         });
     };
 
@@ -146,19 +146,19 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
                     Google.saveBacklogStories(stories, Flow.getBacklogId(), Flow.getProjectName()).then(function() {
                         callback();
                     }, function(error) {
-                        alert('handle error: ' + error); //todo handle error
+                        $rootScope.handleError(error);
                     }).finally(function() {
                         $rootScope.loading = false;
                         $scope.saving = false;
                     });
                 }, function(error) {
-                    alert('handle backlog error: ' + error); //todo handle error
+                    $rootScope.handleError(error);
                 });
             }, function(error) {
-                alert('handle error: ' + error); //todo handle error
+                $rootScope.handleError(error);
             });
         }, function(error) {
-            alert('handle error: ' + error); //todo handle error
+            $rootScope.handleError(error);
         });
     };
 });

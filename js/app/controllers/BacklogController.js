@@ -15,7 +15,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
                     $scope.stories = data.stories;
                     $scope.nextStoryId = data.maxId+1;
                 }, function(error) {
-                    alert('handle backlog error: ' + error); //todo handle error
+                    $rootScope.handleError(error);
                 }).finally(function() {
                     $rootScope.loading = false;
                 });
@@ -123,7 +123,7 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
                     $scope.stories[i].save();
                 }
             }, function(error) {
-                alert('handle error: ' + error); //todo handle error
+                $rootScope.handleError(error);
             }).finally(function() {
                 $rootScope.loading = false;
                 $scope.saving = false;
@@ -218,12 +218,12 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
             Flow.newRelease(file.id, $scope.releaseName, iterations).then(function() {
                 //TODO remove stories from backlog
                 $location.path('/iteration-tracking');
-            }, function() {
-                alert('handle error: ' + error); //todo handle error
+            }, function(error) {
+                $rootScope.handleError(error);
                 $rootScope.loading = false;
             });
         }, function(error) {
-            alert('handle error: ' + error); //todo handle error
+            $rootScope.handleError(error);
             $rootScope.loading = false;
         });
     };

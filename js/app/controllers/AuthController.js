@@ -32,7 +32,7 @@ cloudScrum.controller('AuthController', function AuthController($scope, $rootSco
                     }
                 }
             }, function(error) {
-                alert('handle error: ' + error); //TODO
+                $rootScope.handleError(error);
             }).finally(function() {
                 $rootScope.loading = false;
             });

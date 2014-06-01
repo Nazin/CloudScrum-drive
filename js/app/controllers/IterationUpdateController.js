@@ -44,7 +44,7 @@ cloudScrum.controller('IterationUpdateController', function IterationUpdateContr
                     $scope.iteration.stories[i].save();
                 }
             }, function(error) {
-                alert('handle error: ' + error); //todo handle error
+                $rootScope.handleError(error);
             }).finally(function() {
                 $rootScope.loading = false;
                 $scope.saving = false;

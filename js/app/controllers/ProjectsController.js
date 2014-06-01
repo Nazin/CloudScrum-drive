@@ -20,7 +20,7 @@ cloudScrum.controller('ProjectsController', function ProjectsController($scope, 
                 }
             }
         }, function(error) {
-            alert('handle error: ' + error); //todo
+            $rootScope.handleError(error);
         }).finally(function() {
             $rootScope.loading = false;
         });
@@ -43,10 +43,10 @@ cloudScrum.controller('ProjectsController', function ProjectsController($scope, 
                     $rootScope.loading = false;
                 });
             }, function(error) {
-                alert('handle error: ' + error); //todo
+                $rootScope.handleError(error);
             });
         }, function(error) {
-            alert('handle error: ' + error); //todo
+            $rootScope.handleError(error);
             $rootScope.loading = false;
         });
     };

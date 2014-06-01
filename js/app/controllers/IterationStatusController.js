@@ -100,7 +100,7 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
 
             $scope.loadReleaseCallback($scope.iteration, $scope.iterations, $scope.users);
         }, function(error) {
-            alert('handle error: ' + error); //todo handle error
+            $rootScope.handleError(error);
         }).finally(function() {
             $rootScope.loading = false;
         });

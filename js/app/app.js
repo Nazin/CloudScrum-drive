@@ -98,7 +98,7 @@ cloudScrum.run(function($rootScope, $route, $location, $localStorage, Google, Fl
             $rootScope.companies.push(company);
             $rootScope.loadCompany(company, true);
         }, function(error) {
-            alert('handle error: ' + error); //todo
+            $rootScope.handleError(error);
         }).finally(function() {
             $rootScope.loading = false;
         });
@@ -114,6 +114,22 @@ cloudScrum.run(function($rootScope, $route, $location, $localStorage, Google, Fl
         } else {
             $location.path('/projects')
         }
+    };
+
+    $rootScope.handleError = function(error) {
+        var message = 'Unexpected error. Please refresh the page and try again.';
+        switch (error) {
+            case self.ERROR_TIMEOUT:
+                message = 'Your request has timed out. Please refresh the page and try again.';
+                break;
+            case self.HTTP_ERROR:
+                message = 'Error while downloading the spreadsheet file. Please refresh the page and try again.';
+                break;
+            case self.MISSING_FLOW_FILE:
+                message = 'Flow file is missing!';
+                break;
+        }
+        bootbox.alert(message);
     };
 });
 

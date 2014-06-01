@@ -10,7 +10,7 @@ cloudScrum.controller('UsersController', function UsersController($scope, $rootS
                 $rootScope.loading = false;
                 $scope.users = permissions;
             }, function(error) {
-                alert('handle error: ' + error); //todo handle error
+                $rootScope.handleError(error);
             });
         });
     });
@@ -23,7 +23,7 @@ cloudScrum.controller('UsersController', function UsersController($scope, $rootS
                 Google.deletePermission(Flow.getCompanyId(), user.id).then(function() {
                     $scope.users.splice($scope.users.indexOf(user), 1);
                 }, function(error) {
-                    alert('handle error: ' + error); //todo handle error
+                    $rootScope.handleError(error);
                 }).finally(function() {
                     $rootScope.loading = false;
                 });
@@ -39,7 +39,7 @@ cloudScrum.controller('UsersController', function UsersController($scope, $rootS
             $scope.users.push(permission);
             $scope.email = '';
         }, function(error) {
-            alert('handle error: ' + error); //todo handle error
+            $rootScope.handleError(error);
         }).finally(function() {
             $rootScope.loading = false;
         });
