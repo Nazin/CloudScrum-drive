@@ -32,6 +32,7 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
         $scope.users = users;
 
         getBurndownChartData();
+        getTasksEffortEstimateChartData();
     };
 
     $scope.burndownConfig = {
@@ -75,6 +76,38 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
         loading: false
     };
 
+    $scope.tasksEffortEstimateChartConfig = {
+        options: {
+            chart: {
+                type: 'column'
+            }
+        },
+        title: {
+            text: 'Tasks: estimations vs. effort'
+        },
+        xAxis: {
+            title: {
+                text: 'Iteration'
+            },
+            min: 1,
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: 'Hours'
+            },
+            min: 0
+        },
+        series: [{
+            name: 'Tasks estimations',
+            data: []
+        }, {
+            name: 'Tasks effort',
+            data: []
+        }],
+        loading: false
+    };
+
     var getBurndownChartData = function() {
 
         var ideal = [], actual = [], idealVelocity = $scope.release.totalEstimated / $scope.iterations.length, toBurn = $scope.release.totalEstimated;
@@ -97,6 +130,29 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
         $scope.burndownConfig.series[0].data = ideal;
         $scope.burndownConfig.series[1].data = actual;
         $scope.burndownConfig.xAxis.max = $scope.iterations.length;
+    };
+
+    var getTasksEffortEstimateChartData = function() {
+
+        var tasksEstimation = [0], tasksEffort = [0], iterationTasksEstimation = 0, iterationTasksEffort = 0;
+
+        for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+            iterationTasksEstimation = 0;
+            iterationTasksEffort = 0;
+            if ($scope.release.closed || i <= $scope.release.activeIteration - 1) {
+                for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
+                    for (var k = 0, lk = $scope.iterations[i].stories[j].tasks.length; k < lk; k++) {
+                        iterationTasksEstimation += $scope.iterations[i].stories[j].tasks[k].estimate;
+                        iterationTasksEffort += $scope.iterations[i].stories[j].tasks[k].effort;
+                    }
+                }
+            }
+            tasksEstimation.push(iterationTasksEstimation);
+            tasksEffort.push(iterationTasksEffort);
+        }
+
+        $scope.tasksEffortEstimateChartConfig.series[0].data = tasksEstimation;
+        $scope.tasksEffortEstimateChartConfig.series[1].data = tasksEffort;
     };
 
     $scope.setUnsaved = function() {};

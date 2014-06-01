@@ -5,6 +5,6 @@
         <highchart config="burndownConfig"></highchart>
     </div>
     <div class="col-sm-6">
-
+        <highchart config="tasksEffortEstimateChartConfig"></highchart>
     </div>
 </div>
