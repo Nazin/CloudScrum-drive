@@ -533,7 +533,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
 
         for (i=0; i < l; i++) {
 
-            var iteration = 'Iteration ' + (i+1), worksheet = workbook.createWorksheet({name: iteration + (iterations[i].closed ? ' (Closed)' : '')}), s = iterations[i].stories.length, maxRows = 20 + s, t, tl, tasksAdded = 0;
+            var iteration = 'Iteration ' + (i+1), worksheet = workbook.createWorksheet({name: iteration + (iterations[i].closed ? ' (Closed)' : '')}), s = iterations[i].stories.length, maxRows = 20 + s * 5, t, tl, tasksAdded = 0;
 
             worksheet.setColumns([
                 {width: 2},
