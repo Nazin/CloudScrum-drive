@@ -143,5 +143,9 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
         }
 
         $scope.releasepercentageCompleted = ($scope.release.totalAccepted / $scope.release.totalEstimated) * 100;
+
+        if (typeof $scope.loadReleaseInfo !== 'undefined') {
+            $scope.loadReleaseInfo($scope.iterations, $scope.release, $scope.users);
+        }
     };
 });

@@ -25,14 +25,81 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
         });
     });
 
-    $scope.loadReleaseCallback = function(iteration, iterations, users) {
-        $scope.iteration = iteration;
+    $scope.loadReleaseInfo = function(iterations, release, users) {
 
+        $scope.iterations = iterations;
+        $scope.release = release;
+        $scope.users = users;
+
+        getBurndownChartData();
     };
 
-    $scope.loadIterationCallback = function(iteration, iterations) {
-        $scope.iteration = iteration;
+    $scope.burndownConfig = {
+        options: {
+            chart: {
+                type: 'line',
+                zoomType: 'x'
+            }
+        },
+        series: [{
+            name: 'Ideal burndown',
+            data: [],
+            enableMouseTracking: false
+        }, {
+            name: 'Actual burndown',
+            data: [],
+            enableMouseTracking: false,
+            dataLabels: {
+                enabled: true
+            }
+        }],
+        title: {
+            text: 'Burndown chart'
+        },
+        xAxis: {
+            title: {
+                text: 'Iteration'
+            },
+            min: 0,
+            minRange: 1,
+            allowDecimals: false
+
+        },
+        yAxis: {
+            title: {
+                text: 'Story points'
+            },
+            min: 0,
+            allowDecimals: false
+        },
+        loading: false
+    };
+
+    var getBurndownChartData = function() {
+
+        var ideal = [], actual = [], idealVelocity = $scope.release.totalEstimated / $scope.iterations.length, toBurn = $scope.release.totalEstimated;
+
+        ideal.push($scope.release.totalEstimated);
+        actual.push($scope.release.totalEstimated);
+
+        for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+            ideal.push($scope.release.totalEstimated - idealVelocity * (i + 1));
+            if ($scope.release.closed || i <= $scope.release.activeIteration - 1) {
+                for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
+                    if ($scope.iterations[i].stories[j].status === Configuration.getAcceptedStatusIndex()) {
+                        toBurn -= $scope.iterations[i].stories[j].estimate;
+                    }
+                }
+                actual.push(toBurn);
+            }
+        }
+
+        $scope.burndownConfig.series[0].data = ideal;
+        $scope.burndownConfig.series[1].data = actual;
+        $scope.burndownConfig.xAxis.max = $scope.iterations.length;
     };
 
     $scope.setUnsaved = function() {};
+    $scope.loadReleaseCallback = function() {};
+    $scope.loadIterationCallback = function() {};
 });
