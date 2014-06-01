@@ -1,6 +1,6 @@
 'use strict';
 
-cloudScrum.controller('IterationTrackingController', function IterationTrackingController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
+cloudScrum.controller('IterationTrackingController', function IterationTrackingController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration, growlNotifications) {
 
     $scope.hideTaskStatusInEditModal = false;
     $scope.iteration = {};
@@ -46,7 +46,7 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         bootbox.confirm('Are you sure you want to close this iteration? All stories which are not accepted will be moved to the next iteration!', function(result) {
             if (result) {
                 closeIteration(function() {
-                    //growlNotifications.add('Iteration has been closed', 'success', 2000);//TODO notification
+                    growlNotifications.add('Iteration has been closed', 'success', 2000);
                     $scope.currentIteration++;
                     $scope.activeIteration++;
                     $scope.$broadcast('CLOSE_ITERATION', {iteration: $scope.nextIteration, iterations: $scope.iterations});
@@ -59,7 +59,7 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         bootbox.confirm('Are you sure you want to close this release? All stories which are not accepted will be moved back to the backlog!', function(result) {
             if (result) {
                 closeRelease(function() {
-                    //growlNotifications.add('Release has been closed', 'success', 2000);//TODO notification
+                    growlNotifications.add('Release has been closed', 'success', 2000);
                     $location.path('/backlog');
                 });
             }

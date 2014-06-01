@@ -1,6 +1,6 @@
 'use strict';
 
-cloudScrum.controller('IterationUpdateController', function IterationUpdateController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
+cloudScrum.controller('IterationUpdateController', function IterationUpdateController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration, growlNotifications) {
 
     $scope.$on('EDIT', function() {
         $scope.edit();
@@ -11,6 +11,7 @@ cloudScrum.controller('IterationUpdateController', function IterationUpdateContr
             var releaseId = Flow.getReleaseId();
             if (typeof releaseId === 'undefined') {
                 $timeout(function() {
+                    growlNotifications.add('Please create release first', 'warning', 2000);
                     $location.path('/backlog');
                 }, 100);//instant redirect is causing some unexpected behaviour with sortable widget
             } else {

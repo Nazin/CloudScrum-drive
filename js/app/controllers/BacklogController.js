@@ -1,12 +1,13 @@
 'use strict';
 //TODO on exit -> if unsaved, alert!
-cloudScrum.controller('BacklogController', function BacklogController($scope, $rootScope, $location, $window, $timeout, Google, Flow, Story) {
+cloudScrum.controller('BacklogController', function BacklogController($scope, $rootScope, $location, $window, $timeout, Google, Flow, Story, growlNotifications) {
 
     Google.login().then(function() {
         Flow.on(function() {
             var backlogId = Flow.getBacklogId();
             if (typeof backlogId === 'undefined') {
                 $timeout(function() {
+                    growlNotifications.add('Please select project first', 'warning', 2000);
                     $location.path('/projects');
                 }, 100);//instant redirect is causing some unexpected behaviour with sortable widget
             } else {

@@ -1,6 +1,6 @@
 'use strict';
 
-cloudScrum.controller('TaskBoardController', function TaskBoardController($scope, $rootScope, $location, $timeout, Google, Flow, Configuration) {
+cloudScrum.controller('TaskBoardController', function TaskBoardController($scope, $rootScope, $timeout, Google, Flow, Configuration) {
 
     $scope.hideTaskStatusInEditModal = true;
     $scope.tasksStatuses = Configuration.getTasksStatuses();
