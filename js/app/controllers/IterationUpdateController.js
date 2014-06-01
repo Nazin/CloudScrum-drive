@@ -26,6 +26,10 @@ cloudScrum.controller('IterationUpdateController', function IterationUpdateContr
         });
     });
 
+    $scope.setUnsaved = function(unsaved) {
+        $scope.unsaved = unsaved;
+    };
+
     $scope.saveRelease = function() {
 
         $rootScope.loading = true;

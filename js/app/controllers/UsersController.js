@@ -16,19 +16,19 @@ cloudScrum.controller('UsersController', function UsersController($scope, $rootS
     });
 
     $scope.removeUser = function(user) {
+        bootbox.confirm('Are you sure?', function(result) {
+            if (result) {
+                $rootScope.loading = true;
 
-        if (confirm('Are you sure?')) {//TODO maybe some nicer confirm (not js default)
-
-            $rootScope.loading = true;
-
-            Google.deletePermission(Flow.getCompanyId(), user.id).then(function() {
-                $scope.users.splice($scope.users.indexOf(user), 1);
-            }, function(error) {
-                alert('handle error: ' + error); //todo handle error
-            }).finally(function() {
-                $rootScope.loading = false;
-            });
-        }
+                Google.deletePermission(Flow.getCompanyId(), user.id).then(function() {
+                    $scope.users.splice($scope.users.indexOf(user), 1);
+                }, function(error) {
+                    alert('handle error: ' + error); //todo handle error
+                }).finally(function() {
+                    $rootScope.loading = false;
+                });
+            }
+        });
     };
 
     $scope.addUser = function() {

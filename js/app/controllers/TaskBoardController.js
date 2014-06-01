@@ -8,8 +8,6 @@ cloudScrum.controller('TaskBoardController', function TaskBoardController($scope
     $scope.iteration = {};
     $scope.users = [];
 
-    $scope.unsaved = false;
-
     var statusesInverted = _.invert($scope.tasksStatuses);
 
     $scope.loadIterationCallback = function(iteration, iterations) {

@@ -9,13 +9,17 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
     $scope.storyPointsAccepted = 0;
     $scope.percentCompleted = ($scope.storyPointsAccepted/$scope.storyPointsEstimated)*100;
 
-    var oldReleaseSelected = undefined;
+    var oldReleaseSelected = undefined, loading = false;
+
+    if (Google.isAuthorized() && typeof Flow.getReleaseId() !== 'undefined') {
+        loading = true;
+        preLoadRelease(Flow.getReleaseId());
+    }
 
     $scope.$on('PARENT_READY', function(event, data) {
-        loadRelease(data.releaseId);
-        Google.getPermissionsList(Flow.getCompanyId()).then(function(users) {
-            $scope.users = users;
-        });
+        if (!loading) {
+            preLoadRelease(data.releaseId);
+        }
     });
 
     $scope.$on('UPDATE_STORY_POINTS', function() {
@@ -29,13 +33,20 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
     });
 
     $scope.changeRelease = function() {
-
-        if ($scope.unsaved && !confirm('There are some unsaved changes which you will lost! Do you really want to change the release?')) {
-            $scope.release = oldReleaseSelected;
-            return;
+        if ($scope.unsaved) {
+            bootbox.confirm('There are some unsaved changes which you will lost! Do you really want to change the release?', function(result) {
+                if (!result) {
+                    $scope.release = oldReleaseSelected;
+                    $rootScope.$apply();
+                } else {
+                    $scope.setUnsaved(false);
+                    loadRelease($scope.release.id);
+                }
+            });
+        } else {
+            $scope.setUnsaved(false);
+            loadRelease($scope.release.id);
         }
-
-        loadRelease($scope.release.id);
     };
 
     $scope.updateStoryPoints = function() {
@@ -59,7 +70,14 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
         $scope.loadIterationCallback($scope.iteration, $scope.iterations);
     };
 
-    var loadRelease = function(id) {
+    function preLoadRelease(id) {
+        loadRelease(id);
+        Google.getPermissionsList(Flow.getCompanyId()).then(function(users) {
+            $scope.users = users;
+        });
+    }
+
+    function loadRelease(id) {
 
         $rootScope.loading = true;
 
@@ -86,5 +104,5 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
         }).finally(function() {
             $rootScope.loading = false;
         });
-    };
+    }
 });

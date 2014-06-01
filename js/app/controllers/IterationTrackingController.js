@@ -9,7 +9,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
     $scope.storiesStatusesInfo = Configuration.getStoriesStatuses();
     $scope.tasksStatusesInfo = Configuration.getTasksStatuses();
     $scope.users = [];
-    $scope.unsaved = false;
     $scope.saving = false;
     $scope.task = {};
     $scope.newTaskModal = $('#new-task-modal');
@@ -81,7 +80,6 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
     $scope.loadReleaseCallback = function(iteration, iterations, users) {
         $scope.loadIterationCallback(iteration, iterations);
         $scope.users = users;
-        $scope.unsaved = false;
     };
 
     var closeIteration = function(callback) {
