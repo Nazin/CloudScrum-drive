@@ -50,6 +50,11 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
     $scope.iterations = 0;
     $scope.newStoryModal = $('#new-story-modal');
     $scope.newTaskModal = $('#new-task-modal');
+    $scope.autoPlanModal = $('#auto-plan-modal');
+
+    $scope.autoPlanningError = '';
+    $scope.autoIterations = 5;
+    $scope.velocity = 0;
 
     $scope.iterationLength = 14;
     $scope.releaseStartDate = moment().add('days', 1).format('YYYY-MM-DD');
@@ -132,10 +137,56 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
     };
 
     $scope.planRelease = function() {
-        //TODO button for auto planning (available when 1st iteration have some sp)
         $scope.planning = true;
         $scope.stories.unshift({ruler: true, points: 0, iteration: 1});
         $scope.iterations = 1;
+    };
+
+    $scope.autoPlanRelease = function() {
+
+        if ($scope.autoIterations <= 0) {
+            $scope.autoPlanningError = 'At least one iteration required';
+            return;
+        }
+
+        if ($scope.velocity <= 0) {
+            $scope.autoPlanningError = 'Velocity it too low';
+            return;
+        }
+
+        $scope.autoPlanningError = '';
+
+        var i, l, iterationSum, start = 0, iterations = $scope.autoIterations;
+
+        for (i = $scope.stories.length - 1; i >= 0; i--) {
+            if (typeof $scope.stories[i].ruler !== 'undefined') {
+                $scope.stories.splice(i, 1);
+            }
+        }
+
+        $scope.iterations = 0;
+
+        while (iterations--) {
+
+            iterationSum = 0;
+
+            for (i = start, l = $scope.stories.length; i < l; i++) {
+
+                if (iterationSum !== 0 && iterationSum + $scope.stories[i].estimate > $scope.velocity) {
+                    $scope.stories.splice(i, 0, {ruler: true, points: iterationSum, iteration: ++$scope.iterations});
+                    start = i + 1;
+                    break;
+                }
+
+                iterationSum += $scope.stories[i].estimate;
+            }
+        }
+
+        if ($scope.autoIterations !== $scope.iterations) {
+            $scope.stories.push({ruler: true, points: iterationSum, iteration: ++$scope.iterations});
+        }
+
+        $scope.autoPlanModal.modal('hide');
     };
 
     $scope.cancelPlanning = function() {

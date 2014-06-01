@@ -7,6 +7,7 @@
     <button type="button" class="btn btn-danger pull-right" ng-show="planning" ng-click="cancelPlanning()">Cancel</button>
     <button type="button" class="btn btn-warning pull-right" ng-show="planning" ng-disabled="iterations==1" ng-click="removeLastIteration()">Remove iteration</button>
     <button type="button" class="btn btn-info pull-right" ng-show="planning" ng-click="addIteration()">Add iteration</button>
+    <button type="button" class="btn btn-info pull-right" ng-show="planning" data-toggle="modal" data-target="#auto-plan-modal">Auto plan</button>
     <button type="button" class="btn btn-info pull-right" ng-show="planning" ng-click="saveRelease()">Save release</button>
 </p>
 
@@ -193,6 +194,39 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" ng-disabled="newReleaseForm.$invalid" ng-click="createRelease()">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="auto-plan-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form role="form" class="form-horizontal" name="autoPlanForm" novalidate>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Auto planning</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" ng-show="autoPlanningError !== ''">{{ autoPlanningError }}</div>
+                    <div class="form-group">
+                        <label for="velocity" class="col-sm-2 control-label">Velocity</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="velocity" ng-model="velocity" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="iterations" class="col-sm-2 control-label">Iterations</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="iterations" ng-model="autoIterations" required />
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" ng-disabled="autoPlanForm.$invalid" ng-click="autoPlanRelease()">Auto plan</button>
                 </div>
             </form>
         </div>
