@@ -31,8 +31,14 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
         $scope.release = release;
         $scope.users = users;
 
+        $scope.usersMapping = {};
+        for (var i = 0, l = $scope.users.length; i < l; i++) {
+            $scope.usersMapping[$scope.users[i].emailAddress] = $scope.users[i].name;
+        }
+
         getBurndownChartData();
         getTasksEffortEstimateChartData();
+        getUsersEffortChartData();
     };
 
     $scope.burndownConfig = {
@@ -108,6 +114,32 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
         loading: false
     };
 
+    $scope.usersEffortChartConfig = {
+        options: {
+            chart: {
+                type: 'column'
+            }
+        },
+        title: {
+            text: 'Users effort'
+        },
+        xAxis: {
+            title: {
+                text: 'Iteration'
+            },
+            min: 1,
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: 'Hours'
+            },
+            min: 0
+        },
+        series: [],
+        loading: false
+    };
+
     var getBurndownChartData = function() {
 
         var ideal = [], actual = [], idealVelocity = $scope.release.totalEstimated / $scope.iterations.length, toBurn = $scope.release.totalEstimated;
@@ -153,6 +185,43 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
 
         $scope.tasksEffortEstimateChartConfig.series[0].data = tasksEstimation;
         $scope.tasksEffortEstimateChartConfig.series[1].data = tasksEffort;
+    };
+
+    var getUsersEffortChartData = function() {
+
+        var series = [], usersData = {}, mail;
+
+        for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+
+            if ($scope.release.closed || i <= $scope.release.activeIteration - 1) {
+                for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
+                    for (var k = 0, lk = $scope.iterations[i].stories[j].tasks.length; k < lk; k++) {
+                        var task = $scope.iterations[i].stories[j].tasks[k];
+                        if (task.effort !== 0 && task.owner && task.owner !== '') {
+                            initUserData(usersData, task.owner);
+                            usersData[task.owner][i + 1] += task.effort;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (mail in usersData) {
+            series.push({
+                name: $scope.usersMapping[mail] || mail,
+                data: usersData[mail]
+            });
+        }
+
+        $scope.usersEffortChartConfig.series = series;
+    };
+
+    var initUserData = function(usersData, mail) {
+        if (typeof usersData[mail] === 'undefined') {
+            var size = $scope.iterations.length;
+            usersData[mail] = [];
+            while(size--) usersData[mail].push(0);
+        }
     };
 
     $scope.setUnsaved = function() {};
