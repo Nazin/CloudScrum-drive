@@ -38,16 +38,47 @@ cloudScrum.controller('IterationUpdateController', function IterationUpdateContr
 
             $scope.saving = true;
 
-            Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
-                $scope.unsaved = false;
-                for (var i = 0, l = $scope.iteration.stories.length; i < l; i++) {
-                    $scope.iteration.stories[i].save();
+            var changed = [];
+
+            for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+                if (!$scope.iterations[i].closed) {
+                    changed[i] = {};
+                    for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
+                        if ($scope.iterations[i].stories[j].isUnsaved()) {
+                            changed[i][$scope.iterations[i].stories[j].id] = $scope.iterations[i].stories[j].getChangedFields();
+                        }
+                    }
                 }
+            }
+
+            Google.getReleaseStories(Flow.getReleaseId()).then(function(data) {
+
+                $scope.iterations = data;
+
+                for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+                    if (typeof changed[i] !== 'undefined') {
+                        for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
+                            $scope.iterations[i].stories[j].merge(changed[i][$scope.iterations[i].stories[j].id]);
+                        }
+                    }
+                }
+
+                Google.saveRelease(Flow.getReleaseId(), $scope.iterations, Flow.getReleaseName(), false).then(function() {
+                    $scope.unsaved = false;
+                    for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+                        for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
+                            $scope.iterations[i].stories[j].save();
+                        }
+                    }
+                    $scope.$broadcast('UPDATE_RELEASE_DATA', $scope.iterations);
+                }, function(error) {
+                    $rootScope.handleError(error);
+                }).finally(function() {
+                    $rootScope.loading = false;
+                    $scope.saving = false;
+                });
             }, function(error) {
                 $rootScope.handleError(error);
-            }).finally(function() {
-                $rootScope.loading = false;
-                $scope.saving = false;
             });
         }
     };

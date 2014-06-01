@@ -35,6 +35,10 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
         $scope.updateStoryPoints();
     });
 
+    $scope.$on('UPDATE_RELEASE_DATA', function(event, data) {
+        updateReleaseData(data);
+    });
+
     $scope.$on('CLOSE_ITERATION', function(message, data) {
         $scope.iteration = data.iteration;
         $scope.iterations = data.iterations;
@@ -93,28 +97,32 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
         Flow.setRelease(id);
 
         Google.getReleaseStories(id).then(function(data) {
-
-            $scope.iterations = data;
-            $scope.iteration = _.find($scope.iterations, function(iteration) {return !iteration.closed;});
-
-            if (typeof $scope.iteration === 'undefined') {
-                $scope.iteration = $scope.iterations[$scope.iterations.length-1];
-            }
-
-            $scope.updateStoryPoints();
-
-            $scope.releases = Flow.getReleases();
-            $scope.release = $scope.releases[id];
-            oldReleaseSelected = $scope.release;
-
-            $scope.loadReleaseCallback($scope.iteration, $scope.iterations, $scope.users);
-            countReleaseStatus();
+            updateReleaseData(data, id);
         }, function(error) {
             $rootScope.handleError(error);
         }).finally(function() {
             $rootScope.loading = false;
         });
     }
+
+    var updateReleaseData = function(data, id) {
+
+        $scope.iterations = data;
+        $scope.iteration = _.find($scope.iterations, function(iteration) {return !iteration.closed;});
+
+        if (typeof $scope.iteration === 'undefined') {
+            $scope.iteration = $scope.iterations[$scope.iterations.length-1];
+        }
+
+        $scope.updateStoryPoints();
+
+        $scope.releases = Flow.getReleases();
+        $scope.release = $scope.releases[id || Flow.getReleaseId()];
+        oldReleaseSelected = $scope.release;
+
+        $scope.loadReleaseCallback($scope.iteration, $scope.iterations, $scope.users);
+        countReleaseStatus();
+    };
 
     var countReleaseStatus = function() {
 
