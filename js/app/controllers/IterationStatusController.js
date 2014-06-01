@@ -1,6 +1,6 @@
 'use strict';
 
-cloudScrum.controller('IterationStatusController', function IterationStatusController($scope, $rootScope, Google, Flow) {
+cloudScrum.controller('IterationStatusController', function IterationStatusController($scope, $rootScope, Google, Flow, Configuration) {
 
     $scope.iteration = {};
     $scope.iterations = [];
@@ -8,6 +8,15 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
     $scope.storyPointsEstimated = 0;
     $scope.storyPointsAccepted = 0;
     $scope.percentCompleted = ($scope.storyPointsAccepted/$scope.storyPointsEstimated)*100;
+
+    $scope.release = {
+        startDate: '',
+        endDate: '',
+        totalEstimated: 0,
+        totalAccepted: 0,
+        closed: true,
+        activeIteration: -1
+    };
 
     var oldReleaseSelected = undefined, loading = false;
 
@@ -99,10 +108,40 @@ cloudScrum.controller('IterationStatusController', function IterationStatusContr
             oldReleaseSelected = $scope.release;
 
             $scope.loadReleaseCallback($scope.iteration, $scope.iterations, $scope.users);
+            countReleaseStatus();
         }, function(error) {
             $rootScope.handleError(error);
         }).finally(function() {
             $rootScope.loading = false;
         });
     }
+
+    var countReleaseStatus = function() {
+
+        $scope.release.startDate = $scope.iterations[0].startDate;
+        $scope.release.endDate = $scope.iterations[$scope.iterations.length - 1].endDate;
+
+        $scope.release.totalEstimated = 0;
+        $scope.release.totalAccepted = 0;
+
+        $scope.release.closed = true;
+        $scope.release.activeIteration = -1;
+
+        for (var i = 0, l = $scope.iterations.length; i < l; i++) {
+            if (!$scope.iterations[i].closed) {
+                $scope.release.closed = false;
+                if ($scope.release.activeIteration === -1) {
+                    $scope.release.activeIteration = i + 1;
+                }
+            }
+            for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
+                $scope.release.totalEstimated += $scope.iterations[i].stories[j].estimate;
+                if ($scope.iterations[i].stories[j].status === Configuration.getAcceptedStatusIndex()) {
+                    $scope.release.totalAccepted += $scope.iterations[i].stories[j].estimate;
+                }
+            }
+        }
+
+        $scope.releasepercentageCompleted = ($scope.release.totalAccepted / $scope.release.totalEstimated) * 100;
+    };
 });
