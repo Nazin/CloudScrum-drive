@@ -216,8 +216,11 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
 
         Google.saveRelease(Flow.getProjectId(), iterations, $scope.releaseName, true).then(function(file) {
             Flow.newRelease(file.id, $scope.releaseName, iterations).then(function() {
-                //TODO remove stories from backlog
-                $location.path('/iteration-tracking');
+                Google.saveBacklogStories(stories, Flow.getBacklogId(), Flow.getProjectName()).then(function() {
+                    $location.path('/iteration-tracking');
+                }, function(error) {
+                    $rootScope.handleError(error);
+                });
             }, function(error) {
                 $rootScope.handleError(error);
                 $rootScope.loading = false;
