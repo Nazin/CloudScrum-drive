@@ -218,7 +218,7 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
 
     var initUserData = function(usersData, mail) {
         if (typeof usersData[mail] === 'undefined') {
-            var size = $scope.iterations.length;
+            var size = $scope.iterations.length + 1;
             usersData[mail] = [];
             while(size--) usersData[mail].push(0);
         }
