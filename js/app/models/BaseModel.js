@@ -91,6 +91,30 @@ cloudScrum.factory('BaseModel', [function() {
 
             return changed;
         };
+
+        this.getChangedFields = function() {
+
+            var changedFields = {};
+
+            for (var i = 0, l = fields.length; i < l; i++) {
+                if (_valuesChanged[fields[i]]) {
+                    changedFields[fields[i]] = _values[fields[i]];
+                }
+            }
+
+            for (var k = 0, kl = collections.length; k < kl; k++) {
+                changedFields[collections[k]] = {'new': [], 'changed': []};
+                for (var j = 0, jl = this[collections[k]].length; j < jl; j++) {
+                    if (this[collections[k]][j].isNew) {
+                        changedFields[collections[k]].new.push(this[collections[k]][j]);
+                    } else if (this[collections[k]][j].isUnsaved()) {
+                        changedFields[collections[k]].changed[j] = this[collections[k]][j].getChangedFields();
+                    }
+                }
+            }
+
+            return changedFields;
+        };
     }
 
     BaseModel.prototype.set = function(data) {

@@ -64,24 +64,35 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
 
     //TODO refresh stories (once per 5 minutes?) if not unsaved
 
+    var orderChanged = false, sortedPositions;
+
     $scope.sortableOptions = {
         stop: function() {
-
-            var sp = 0, it = 1;
-
-            for (var i = 0; i < $scope.stories.length; i++) {
-                if (typeof $scope.stories[i].ruler === 'undefined') {
-                    sp += $scope.stories[i].estimate;
+            if (orderChanged) {
+                var i = 0, l = $scope.stories.length;
+                if (!$scope.planning) {
+                    sortedPositions = {};
+                    for (; i < l; i++) {
+                        sortedPositions[$scope.stories[i].id] = i;
+                    }
                 } else {
+                    var sp = 0, it = 1;
+                    for (; i < l; i++) {
+                        if (typeof $scope.stories[i].ruler === 'undefined') {
+                            sp += $scope.stories[i].estimate;
+                        } else {
 
-                    $scope.stories[i].points = sp;
-                    $scope.stories[i].iteration = it++;
+                            $scope.stories[i].points = sp;
+                            $scope.stories[i].iteration = it++;
 
-                    sp = 0;
+                            sp = 0;
+                        }
+                    }
                 }
             }
         },
         update: function() {
+            orderChanged = true;
             if (!$scope.planning) {
                 $scope.unsaved = true;
                 $scope.sorted = true;
@@ -122,16 +133,52 @@ cloudScrum.controller('BacklogController', function BacklogController($scope, $r
 
             $scope.saving = true;
 
-            Google.saveBacklogStories($scope.stories, Flow.getBacklogId(), Flow.getProjectName()).then(function() {
-                $scope.unsaved = false;
-                for (var i = 0, l = $scope.stories.length; i < l; i++) {
-                    $scope.stories[i].save();
+            var newStories = [], changed = {}, idsUpdate = {};
+
+            for (var i = 0, l = $scope.stories.length; i < l; i++) {
+                if ($scope.stories[i].isNew) {
+                    newStories.push($scope.stories[i]);
+                } else if ($scope.stories[i].isUnsaved()) {
+                    changed[$scope.stories[i].id] = $scope.stories[i].getChangedFields();
                 }
+            }
+
+            Google.getBacklogStories(Flow.getBacklogId()).then(function(data) {
+
+                $scope.stories = data.stories;
+                $scope.nextStoryId = data.maxId + 1;
+
+                var i, l;
+
+                for (i = 0, l = $scope.stories.length; i < l; i++) {
+                    $scope.stories[i].merge(changed[$scope.stories[i].id]);
+                }
+
+                for (i = 0, l = newStories.length; i < l; i++) {
+                    idsUpdate[newStories[i].id] = 'S-' + ($scope.nextStoryId++);
+                    newStories[i].id = idsUpdate[newStories[i].id];
+                    $scope.stories.push(newStories[i]);
+                }
+
+                if ($scope.sorted) {
+                    $scope.stories.sort(function(a, b) {
+                        return sortedPositions[idsUpdate[a.id] || a.id] - sortedPositions[idsUpdate[b.id] || b.id];
+                    });
+                }
+
+                Google.saveBacklogStories($scope.stories, Flow.getBacklogId(), Flow.getProjectName()).then(function() {
+                    $scope.unsaved = false;
+                    for (var i = 0, l = $scope.stories.length; i < l; i++) {
+                        $scope.stories[i].save();
+                    }
+                }, function(error) {
+                    $rootScope.handleError(error);
+                }).finally(function() {
+                    $rootScope.loading = false;
+                    $scope.saving = false;
+                });
             }, function(error) {
                 $rootScope.handleError(error);
-            }).finally(function() {
-                $rootScope.loading = false;
-                $scope.saving = false;
             });
         }
     };
