@@ -9,21 +9,24 @@ cloudScrum.controller('ProjectsController', function ProjectsController($scope, 
     $scope.projects = [];
 
     Google.login().then(function() {
-        Google.findProjectsFiles(Flow.getCompanyId()).then(function(files) {
-            if (files.length === 0) {
-                if (!$rootScope.companyModalVisible) {
-                    $scope.newProjectModal.modal('show');
+
+        if (typeof Flow.getCompanyId() === 'undefined') {
+
+            Google.findCompaniesFiles().then(function(files) {
+
+                if (files.length === 0) {
+                    $rootScope.newCompanyModal.modal('show');
+                    $rootScope.loading = false;
+                } else {
+                    Flow.setCompany(files[0].id, files[0].title.replace('CloudScrum-', ''));
+                    findProjects();
                 }
-            } else {
-                for (var i=0; i<files.length; i++) {
-                    $scope.projects.push({id: files[i].id, name: files[i].title});
-                }
-            }
-        }, function(error) {
-            $rootScope.handleError(error);
-        }).finally(function() {
-            $rootScope.loading = false;
-        });
+            }, function(error) {
+                $rootScope.handleError(error);
+            });
+        } else {
+            findProjects();
+        }
     });
 
     $scope.createProject = function() {
@@ -54,5 +57,23 @@ cloudScrum.controller('ProjectsController', function ProjectsController($scope, 
     $scope.loadProject = function(project) {
         Flow.setProject(project.id);
         $location.path('/backlog');
+    };
+
+    var findProjects = function() {
+        Google.findProjectsFiles(Flow.getCompanyId()).then(function(files) {
+            if (files.length === 0) {
+                if (!$rootScope.companyModalVisible) {
+                    $scope.newProjectModal.modal('show');
+                }
+            } else {
+                for (var i=0; i<files.length; i++) {
+                    $scope.projects.push({id: files[i].id, name: files[i].title});
+                }
+            }
+        }, function(error) {
+            $rootScope.handleError(error);
+        }).finally(function() {
+            $rootScope.loading = false;
+        });
     };
 });

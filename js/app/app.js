@@ -32,7 +32,8 @@ cloudScrum.config(function($routeProvider) {
     }).when('/users', {
         controller: 'UsersController',
         templateUrl: 'views/users.tpl',
-        title: 'Users'
+        title: 'Users',
+        nameInBreadcrumb: false
     }).otherwise({
         redirectTo: '/backlog'
     });

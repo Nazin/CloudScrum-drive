@@ -1,6 +1,6 @@
 'use strict';
 
-cloudScrum.controller('DashboardController', function DashboardController($scope, $rootScope, $timeout, Google, Flow, Configuration, growlNotifications) {
+cloudScrum.controller('DashboardController', function DashboardController($scope, $rootScope, $timeout, $location, Google, Flow, Configuration, growlNotifications) {
 
     $scope.releaseData = true;
 
