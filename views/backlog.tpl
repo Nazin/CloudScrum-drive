@@ -38,7 +38,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Estimate</label>
                             <div class="col-xs-3">
-                                <input type="number" min="1" class="form-control" ng-model="story.estimate" ng-value-change="edit()" ng-class="{ changed: story._estimate }" ng-readonly="planning" required />
+                                <input type="number" min="1" class="form-control" ng-model="story.estimate" placeholder="SP" ng-value-change="edit()" ng-class="{ changed: story._estimate }" ng-readonly="planning" required />
                             </div>
                         </div>
                         <div class="form-group">
@@ -65,7 +65,7 @@
                                         <input type="text" class="form-control" ng-model="task.title" ng-value-change="edit()" ng-class="{ changed: task._title }" ng-readonly="planning" placeholder="Title" required />
                                     </div>
                                     <div class="col-sm-3 col-sm-offset-1">
-                                        <input type="number" min="1" class="form-control" ng-model="task.estimate" ng-value-change="edit()" ng-class="{ changed: task._estimate }" ng-readonly="planning" placeholder="Estimate" required />
+                                        <input type="number" min="1" class="form-control" ng-model="task.estimate" ng-value-change="edit()" ng-class="{ changed: task._estimate }" ng-readonly="planning" placeholder="Estimate (h)" required />
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -100,7 +100,7 @@
                     <div class="form-group">
                         <label for="storyEstimate" class="col-sm-2 control-label">Estimate</label>
                         <div class="col-xs-3">
-                            <input type="number" min="1" class="form-control" id="storyEstimate" ng-model="story.estimate" required>
+                            <input type="number" min="1" placeholder="SP" class="form-control" id="storyEstimate" ng-model="story.estimate" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -143,7 +143,7 @@
                     <div class="form-group">
                         <label for="taskEstimate" class="col-sm-2 control-label">Estimate</label>
                         <div class="col-xs-3">
-                            <input type="number" min="1" class="form-control" id="taskEstimate" ng-model="task.estimate" required>
+                            <input type="number" min="1" placeholder="h" class="form-control" id="taskEstimate" ng-model="task.estimate" required>
                         </div>
                     </div>
                     <div class="form-group">
