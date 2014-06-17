@@ -175,7 +175,7 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
                 for (var j = 0, lj = $scope.iterations[i].stories.length; j < lj; j++) {
                     for (var k = 0, lk = $scope.iterations[i].stories[j].tasks.length; k < lk; k++) {
                         iterationTasksEstimation += $scope.iterations[i].stories[j].tasks[k].estimate;
-                        iterationTasksEffort += $scope.iterations[i].stories[j].tasks[k].effort;
+                        iterationTasksEffort += $scope.iterations[i].stories[j].tasks[k].hoursEffort;
                     }
                 }
             }
@@ -199,7 +199,7 @@ cloudScrum.controller('DashboardController', function DashboardController($scope
                         var task = $scope.iterations[i].stories[j].tasks[k];
                         if (task.effort !== 0 && task.owner && task.owner !== '') {
                             initUserData(usersData, task.owner);
-                            usersData[task.owner][i + 1] += task.effort;
+                            usersData[task.owner][i + 1] += task.hoursEffort;
                         }
                     }
                 }

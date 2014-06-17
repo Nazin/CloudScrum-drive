@@ -115,6 +115,11 @@ cloudScrum.factory('BaseModel', [function() {
 
             return changedFields;
         };
+
+        this.updateField = function(field, value) {
+            _originalValues[field] = _values[field] = value;
+            _valuesChanged[field] = false;
+        };
     }
 
     BaseModel.prototype.set = function(data) {

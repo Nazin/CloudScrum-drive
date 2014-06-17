@@ -79,7 +79,7 @@ cloudScrum.directive('ngValueChange', function($parse) {
                     scope.oldValue = element.val();
 
                     if (attr['type'] && attr['type'] === 'number') {
-                        scope.oldValue = parseInt(scope.oldValue);
+                        scope.oldValue = parseFloat(scope.oldValue);
                     }
                 });
 
@@ -87,12 +87,12 @@ cloudScrum.directive('ngValueChange', function($parse) {
 
                     var newValue = element.val();
                     if (attr['type'] && attr['type'] === 'number') {
-                        newValue = parseInt(newValue);
+                        newValue = parseFloat(newValue);
                     }
 
                     if (newValue !== scope.oldValue) {
                         scope.$apply(function() {
-                            fn(scope, {$event: event, $field: attr['name'], $value: newValue});
+                            fn(scope, {$event: event, $field: attr['name'], $value: newValue, $oldValue: scope.oldValue});
                         });
                     }
                 });

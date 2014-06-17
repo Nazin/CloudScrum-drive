@@ -16,13 +16,13 @@
                     <div class="form-group">
                         <label for="editItemEstimate" class="col-sm-2 control-label">Estimate</label>
                         <div class="col-xs-3">
-                            <input type="number" ng-min="1" min="1" class="form-control" id="editItemEstimate" ng-model="editItem.estimate" ng-value-change="edit();" ng-change="updateStoryPoints();" ng-disabled="iteration.closed" ng-class="{ changed: editItem._estimate }" required>
+                            <input placeholder="{{ editItemStory ? 'SP' : 'h' }}" type="number" ng-min="1" min="1" class="form-control" id="editItemEstimate" ng-model="editItem.estimate" ng-value-change="edit();" ng-change="updateStoryPoints();" ng-disabled="iteration.closed" ng-class="{ changed: editItem._estimate }" required>
                         </div>
                     </div>
                     <div class="form-group" ng-if="!editItemStory">
                         <label for="editItemEffort" class="col-sm-2 control-label">Effort</label>
                         <div class="col-xs-3">
-                            <input type="number" ng-min="0" min="0" class="form-control" id="editItemEffort" ng-model="editItem.effort" ng-value-change="edit();" ng-change="updateEffort(activeStory);" ng-disabled="iteration.closed" ng-class="{ changed: editItem._effort }" required>
+                            <input type="number" placeholder="h" ng-min="0" min="0" class="form-control" id="editItemEffort" ng-model="editItem.hoursEffort" ng-value-change="updateTaskEffort(editItem, $value, $oldValue);edit();" step="any" ng-change="updateEffort(activeStory);" ng-disabled="iteration.closed" ng-class="{ changed: editItem._effort }" required>
                         </div>
                     </div>
                     <div class="form-group" ng-if="editItemStory">

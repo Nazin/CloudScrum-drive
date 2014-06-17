@@ -17,7 +17,8 @@ cloudScrum.controller('IterationTrackingController', function IterationTrackingC
         $scope.task = {
             status: $scope.tasksStatusesInfo[0],
             details: '',
-            effort: 0
+            effort: 0,
+            hoursEffort: 0
         };
     };
 

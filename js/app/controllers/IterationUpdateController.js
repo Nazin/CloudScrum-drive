@@ -129,12 +129,16 @@ cloudScrum.controller('IterationUpdateController', function IterationUpdateContr
 
         var effort = 0;
         for (var i=0; i<story.tasks.length; i++) {
-            effort += story.tasks[i]['effort'] ? parseInt(story.tasks[i]['effort']) : 0;
+            effort += story.tasks[i]['hoursEffort'] ? parseFloat(story.tasks[i]['hoursEffort']) : 0;
         }
 
         if (story.effort !== effort) {
-            story.effort = effort;
+            story.updateField('effort', parseFloat(effort.toFixed(1)));
         }
+    };
+
+    $scope.updateTaskEffort = function(task, value, oldValue) {
+        task.effort += (value - oldValue) * 3600;
     };
 
     $scope.updateStoryPoints = function() {

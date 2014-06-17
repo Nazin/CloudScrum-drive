@@ -64,7 +64,7 @@
                     <td>{{task.estimate}} h</td>
                     <td>
                         <div class="form-group">
-                            <input type="number" class="form-control input-sm" ng-model="task.effort" ng-min="0" min="0" ng-value-change="edit();" ng-change="updateEffort(story);" ng-class="{ changed: task._effort }" required ng-readonly="iteration.closed" /> h
+                            <input type="number" class="form-control input-sm" ng-model="task.hoursEffort" ng-min="0" min="0" step="any" ng-value-change="updateTaskEffort(task, $value, $oldValue);edit();" ng-change="updateEffort(story);" ng-class="{ changed: task._effort }" required ng-readonly="iteration.closed" /> h
                         </div>
                     </td>
                 </tr>
@@ -95,7 +95,7 @@
                         <div class="form-group">
                             <label for="taskEstimate" class="col-sm-2 control-label">Estimate</label>
                             <div class="col-xs-3">
-                                <input type="number" min="1" class="form-control" id="taskEstimate" ng-model="task.estimate" required>
+                                <input placeholder="h" type="number" min="1" class="form-control" id="taskEstimate" ng-model="task.estimate" required>
                             </div>
                         </div>
                         <div class="form-group">

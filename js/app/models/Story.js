@@ -10,6 +10,7 @@ cloudScrum.factory('Story', ['BaseModel', 'Task', function(BaseModel, Task) {
 
     Story.prototype.addTask = function(task, isNew) {
         this.tasks.push(new Task(task, isNew));
+        this.updateField('effort', this.effort + task.hoursEffort);
     };
 
     Story.prototype.merge = function(changedFields) {

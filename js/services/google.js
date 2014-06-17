@@ -580,7 +580,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
             data[6][5].metadata.type = 'formula';
 
             for (j=0; j<n; j++) {
-                data[9][j+1].value = iterationColumns[j].capitalize();
+                data[9][j+1].value = iterationColumns[j] === 'effort' ? 'Effort (s)' : iterationColumns[j].capitalize();
                 data[9][j+1].metadata.style = styles.header.id;
             }
 
@@ -668,9 +668,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                         story[columns[j]] = typeof val !== 'undefined' ? val : '';
                     }
 
-                    if (typeof story['effort'] !== 'undefined') {
-                        story['effort'] = parseInt(story['effort']);
-                    }
+                    story['effort'] = 0;
 
                     tmp2 = parseInt(story['id'].replace('S-', ''));
                     if (tmp2 > maxId) {
@@ -693,6 +691,8 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
                     if (typeof task['status'] === 'undefined') {
                         task['status'] = tasksStatuses[0];
                     }
+
+                    task['hoursEffort'] = parseFloat((task['effort']/3600).toFixed(1));
 
                     tmp = stories[stories.length-1];
                     task['id'] = 'T-' + (tmp.tasks.length + 1);
