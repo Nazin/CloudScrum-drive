@@ -5,6 +5,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
     var clientId = '641738097836.apps.googleusercontent.com',
         apiKey = 'AIzaSyBduR27RDdEu6gN5ggwi6JFdqANv_xFpLk',
         scopes = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets https://spreadsheets.google.com/feeds/',
+        proxyLink = 'http://144.76.93.149/proxy',
         timeoutTime = 30000,
         isAuthorized = false,
         deferred = $q.defer(),
@@ -297,7 +298,7 @@ cloudScrum.service('Google', function Google($location, $rootScope, $q, $timeout
         require(['xlsx'], function(XLSX) {
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://37.59.14.211/proxy');
+            xhr.open('POST', proxyLink);
             xhr.responseType = 'arraybuffer';
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
