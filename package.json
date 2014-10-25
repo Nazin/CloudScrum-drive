@@ -1,0 +1,15 @@
+{
+    "name"         : "CloudScrum-drive",
+    "version"      : "0.1.0",
+    "repository"   : {
+        "type"       : "git",
+        "url"        : "git@github.com:Nazin/CloudScrum-drive.git"
+    },
+    "author"       : "Piotr Niziniecki",
+    "devDependencies": {
+        "grunt": "latest",
+        "grunt-contrib-watch": "latest",
+        "grunt-contrib-less": "latest",
+        "matchdep": "latest"
+    }
+}
